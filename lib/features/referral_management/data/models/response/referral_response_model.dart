@@ -1,72 +1,146 @@
+import 'dart:ui';
+
+import '../../../../../core/constants/app_colors.dart';
+import '../referral_status_enum.dart';
+
 class ReferralModel {
   final String id;
+  final String referer;
   final String fullName;
   final String email;
   final String phone;
-  final double expectedCommission;
+  final String expectedCommission;
   final String course;
   final String country;
+  final String adminNote;
+  final String adminAppNote;
+  final String adminEnrollNote;
   final String additionalNotes;
   final String? additionalNoteSubmittedAt;
   final String referredBy;
   final String referrerEmail;
-  final String status;
+  final EnrollReferralStatus enrollStatus;
+  final AppReferralStatus appStatus;
+  final CommissionStatus commissionStatus;
   final String createdAt;
   final String? updatedAt;
+  final String? enrollModDate;
 
   ReferralModel({
     required this.id,
+    required this.referer,
     required this.fullName,
     required this.email,
     required this.phone,
     required this.expectedCommission,
     required this.course,
     required this.country,
+    required this.adminNote,
+    required this.adminAppNote,
+    required this.adminEnrollNote,
     required this.additionalNotes,
     this.additionalNoteSubmittedAt,
     required this.referredBy,
     required this.referrerEmail,
-    required this.status,
+    required this.enrollStatus,
+    required this.appStatus,
+    required this.commissionStatus,
     required this.createdAt,
     this.updatedAt,
+    this.enrollModDate,
   });
 
   factory ReferralModel.fromJson(Map<String, dynamic> json) {
     return ReferralModel(
       id: json['id'] ?? "",
-      fullName: json['fullName'] ?? '',
+      referer: json['referer'] ?? "",
+      fullName: json['fullname'] ?? '',
       email: json['email'] ?? '',
-      phone: json['phone'] ?? '',
-      expectedCommission: json['amount'] ?? 0.0,
+      phone: json['number'] ?? '',
+      expectedCommission: json['comm'] ?? "0",
       course: json['course'] ?? '',
       country: json['country'] ?? '',
+      adminNote: json['note'] ?? "",
+      adminAppNote: json['app_com'] ?? "",
+      adminEnrollNote: json['enroll_com'] ?? "",
       additionalNotes: json['reg_comm'] ?? '',
       additionalNoteSubmittedAt:
-          json['reg_comms'] ?? DateTime.now().toIso8601String(),
-      referredBy: json['referred_by'] ?? '',
-      referrerEmail: json['referrer_email'] ?? '',
-      status: json['status'] ?? "",
-      createdAt: json['created_at'] ?? DateTime.now().toIso8601String(),
-      updatedAt: json['updated_at'],
+          json['reg_date'] ?? DateTime.now().toIso8601String(),
+      referredBy: json['referer_name'] ?? '',
+      referrerEmail: json['referer_email'] ?? '',
+      enrollStatus: EnrollReferralStatusExtension.fromString(
+        json['enroll_stat'] ?? "",
+      ),
+      appStatus: AppReferralStatusExtension.fromString(json['app_stat'] ?? ""),
+      commissionStatus: CommissionStatusExtension.fromString(
+        json['comm_stat'] ?? "",
+      ),
+      createdAt: json['reg_date'] ?? DateTime.now().toIso8601String(),
+      updatedAt: json['mod_date'],
+      enrollModDate: json['enroll_mod_date'],
     );
   }
 
   factory ReferralModel.empty() {
     return ReferralModel(
       id: "",
+      referer: "",
       fullName: '',
       email: '',
       phone: '',
-      expectedCommission: 0.0,
+      expectedCommission: "0.0",
       course: '',
       country: '',
+      adminNote: "",
+      adminAppNote: "",
+      adminEnrollNote: "",
       additionalNotes: '',
       additionalNoteSubmittedAt: DateTime.now().toIso8601String(),
       referredBy: '',
       referrerEmail: '',
-      status: "",
+      enrollStatus: EnrollReferralStatus.referred,
+      appStatus: AppReferralStatus.pending,
+      commissionStatus: CommissionStatus.pending,
       createdAt: DateTime.now().toIso8601String(),
       updatedAt: null,
+      enrollModDate: null,
     );
+  }
+
+  static Color getEnrollStatusColor(EnrollReferralStatus status) {
+    return switch (status) {
+      EnrollReferralStatus.referred => AppColors.dynamic,
+      EnrollReferralStatus.contacted => AppColors.green,
+      EnrollReferralStatus.applicationStarted => AppColors.orange,
+      EnrollReferralStatus.documentSubmitted => AppColors.dynamic,
+      EnrollReferralStatus.offerIssued => AppColors.green,
+      EnrollReferralStatus.visaProcessing => AppColors.orange,
+      EnrollReferralStatus.visaApproved => AppColors.green,
+      EnrollReferralStatus.enrolled => AppColors.dynamic,
+      EnrollReferralStatus.cancelled => AppColors.dynamic,
+      EnrollReferralStatus.paid => AppColors.primary,
+    };
+  }
+
+  Color getAppStatusColor() {
+    return switch (appStatus) {
+      AppReferralStatus.pending => AppColors.orange,
+      AppReferralStatus.approved => AppColors.green,
+      AppReferralStatus.cancelled => AppColors.error,
+    };
+  }
+
+  Color getCommissionStatusColor() {
+    return switch (commissionStatus) {
+      CommissionStatus.pending => AppColors.orange,
+      CommissionStatus.paid => AppColors.primary,
+      CommissionStatus.cancelled => AppColors.dynamic,
+    };
+  }
+
+  static List<String> getEnrollStatuses() {
+    return EnrollReferralStatus.values
+        .map((status) => status.statusString)
+        .toList();
   }
 }

@@ -5,7 +5,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/utils/helpers.dart';
 import '../../../styles/text_styles.dart';
 
 class SearchTextInput extends StatefulWidget {
@@ -24,6 +23,7 @@ class SearchTextInput extends StatefulWidget {
     this.color,
     this.inverse = false,
     this.radius = 16,
+    this.height = 49,
   });
 
   final bool errorBool;
@@ -39,6 +39,7 @@ class SearchTextInput extends StatefulWidget {
   final Color? color;
   final bool inverse;
   final double radius;
+  final double height;
 
   @override
   State<SearchTextInput> createState() => _SearchTextInputState();
@@ -69,7 +70,7 @@ class _SearchTextInputState extends State<SearchTextInput> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 49.h,
+      height: widget.height.h,
       decoration: BoxDecoration(
         color: widget.color ?? Colors.transparent,
         borderRadius: BorderRadius.circular(widget.radius.r),
@@ -79,7 +80,7 @@ class _SearchTextInputState extends State<SearchTextInput> {
               ? AppColors.error
               : isFocused
               ? AppColors.primary50
-              : dynamicColor(.1),
+              : AppColors.dynamic20,
         ),
       ),
       padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -91,7 +92,7 @@ class _SearchTextInputState extends State<SearchTextInput> {
               AssetsSvgIcons.search,
               width: 24.w,
               height: 24.h,
-              colorFilter: ColorFilter.mode(dynamicColor(), BlendMode.srcIn),
+              colorFilter: ColorFilter.mode(AppColors.dynamic, BlendMode.srcIn),
             ),
             SizedBox(width: 8.w),
           ],
@@ -110,23 +111,22 @@ class _SearchTextInputState extends State<SearchTextInput> {
                 hintText: widget.hintText,
                 hintStyle: TextStyles.normalRegular14(
                   context,
-                ).copyWith(fontSize: 15.sp, color: dynamicColor(.4)),
+                ).copyWith(fontSize: 15.sp, color: AppColors.dynamic40),
                 border: InputBorder.none,
               ),
               style: TextStyles.normalRegular14(
                 context,
-              ).copyWith(fontSize: 15.sp, color: dynamicColor()),
+              ).copyWith(fontSize: 15.sp, color: AppColors.dynamic),
               onChanged: widget.onChanged,
             ),
           ),
           if (widget.inverse) ...[
             SizedBox(width: 8.w),
-
             SvgPicture.asset(
               AssetsSvgIcons.search,
               width: 24.w,
               height: 24.h,
-              colorFilter: ColorFilter.mode(dynamicColor(), BlendMode.srcIn),
+              colorFilter: ColorFilter.mode(AppColors.dynamic, BlendMode.srcIn),
             ),
           ],
         ],

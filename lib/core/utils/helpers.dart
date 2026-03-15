@@ -187,3 +187,43 @@ String formatDate(String date) {
   String formatted = DateFormat('d MMM, yyyy').format(dateTime);
   return formatted;
 }
+
+List<String> formatDateRange(List<DateTime> dateList) {
+  if (dateList.isEmpty || dateList.length > 2) {
+    return ["from", "to"]; // Return empty string for invalid input
+  }
+
+  final dateFormatter = DateFormat('EEE, dd MMM');
+  final yearFormatter = DateFormat('EEE, dd MMM yyyy');
+  final currentYear = DateTime.now().year;
+
+  // Single date
+  if (dateList.length == 1) {
+    final date = dateList[0];
+    // Display year only if the date is not in the current year
+    return [
+      date.year == currentYear
+          ? dateFormatter.format(date)
+          : yearFormatter.format(date),
+      "to",
+    ];
+  }
+
+  final firstDate = dateList[0];
+  final secondDate = dateList[1];
+
+  // Check if both dates are in the same year
+  if (firstDate.year == secondDate.year) {
+    return [
+      firstDate.year == currentYear
+          ? dateFormatter.format(firstDate)
+          : yearFormatter.format(firstDate),
+      secondDate.year == currentYear
+          ? dateFormatter.format(secondDate)
+          : yearFormatter.format(secondDate),
+    ];
+  } else {
+    // Different years, include the year in both dates
+    return [yearFormatter.format(firstDate), yearFormatter.format(secondDate)];
+  }
+}

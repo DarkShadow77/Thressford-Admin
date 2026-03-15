@@ -143,6 +143,7 @@ class AppColors {
   static Color get orange39 => orange.withValues(alpha: .39);
   static Color get orange10 => orange.withValues(alpha: .10);
   static Color get orange5 => orange.withValues(alpha: .05);
+  static Color get orange025 => orange.withValues(alpha: .025);
 
   //State-Colors ---Orange
   static const Color green = Color(0xFF10B981);

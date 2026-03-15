@@ -1,6 +1,6 @@
 part of 'auth_bloc.dart';
 
-enum AuthType { login }
+enum AuthType { login, changePassword }
 
 sealed class AuthState extends Equatable {
   const AuthState();

@@ -4,6 +4,12 @@ class RouteName {
 
   static const String dashboardPage = 'dashboard_page';
 
+  //User Management Page
+  static const String userManagementPage = 'user_management_page';
+  static const String userManagementDetailsPage =
+      'user_management_details_page';
+  static const String userReferralsPage = 'user_referrals_page';
+
   //Referral Management Page
   static const String referralManagementPage = 'referral_management_page';
   static const String referralManagementDetailsPage =

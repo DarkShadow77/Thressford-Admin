@@ -68,6 +68,7 @@ class AssetsSvgIcons {
   static String edit = "$baseSvgIconsPath/edit.svg";
   static String note = "$baseSvgIconsPath/note.svg";
   static String details = "$baseSvgIconsPath/details.svg";
+  static String filter = "$baseSvgIconsPath/filter.svg";
   /*static String zap = "$baseSvgIconsPath/zap.svg";
   static String chatting = "$baseSvgIconsPath/chatting.svg";
   static String userGroup = "$baseSvgIconsPath/user_group.svg";

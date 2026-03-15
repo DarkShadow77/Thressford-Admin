@@ -17,6 +17,11 @@ import 'core/constants/navigators/router.dart';
 import 'core/constants/strings.dart';
 import 'core/di/service_locator.dart';
 import 'core/utils/local_storage.dart';
+import 'features/auth/presentation/bloc/auth_bloc.dart';
+import 'features/dashboard/presentation/bloc/dashboard_bloc.dart';
+import 'features/referral_management/presentation/bloc/referral_bloc.dart';
+import 'features/settings/presentation/bloc/admin_bloc.dart';
+import 'features/user_management/presentation/bloc/users_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -89,12 +94,13 @@ class _MyAppState extends State<MyApp> {
       child: MultiBlocProvider(
         providers: [
           BlocProvider(create: (_) => sl<ThemeBloc>()),
-          /*BlocProvider(create: (_) => sl<DashboardBloc>()),
-          BlocProvider(create: (_) => sl<AuthBloc>()),
-          BlocProvider(create: (_) => sl<ProfileBloc>()),
-          BlocProvider(create: (_) => sl<NotificationBloc>()),
+          BlocProvider(create: (_) => sl<DashboardBloc>()),
+          BlocProvider(
+            create: (_) => sl<AuthBloc>()..profileBloc = sl<DashboardBloc>(),
+          ),
+          BlocProvider(create: (_) => sl<AdminBloc>()),
+          BlocProvider(create: (_) => sl<UsersBloc>()),
           BlocProvider(create: (_) => sl<ReferralBloc>()),
-          BlocProvider(create: (_) => sl<WalletBloc>()),*/
         ],
         child: BlocBuilder<ThemeBloc, ThemeMode>(
           builder: (context, themeMode) {

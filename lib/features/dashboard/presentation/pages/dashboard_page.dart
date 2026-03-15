@@ -12,6 +12,8 @@ import '../../../../app/view/widgets/thessford_icon.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/strings.dart';
 import '../../../../core/utils/helpers.dart';
+import '../../data/models/response/overview_response_model.dart';
+import '../bloc/dashboard_bloc.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -21,18 +23,22 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  // UserProfile profile = UserProfile.empty();
+  OverviewModel overview = OverviewModel.empty();
 
   @override
   void initState() {
     super.initState();
-    /*final profileBloc = context.read<ProfileBloc>();
-    profile = profileBloc.state.userProfile;
-    profileBloc.add(GetProfileEvent());*/
+    final profileBloc = context.read<DashboardBloc>();
+    overview = profileBloc.state.overview;
+    profileBloc.add(GetOverviewEvent());
   }
 
   List<Map<String, String>> quickActions = [
-    {"title": "User Management", "icon": AssetsSvgIcons.userGroup, "route": ""},
+    {
+      "title": "User Management",
+      "icon": AssetsSvgIcons.userGroup,
+      "route": RouteName.userManagementPage,
+    },
     {
       "title": "Referrals",
       "icon": AssetsSvgIcons.stickyNote,
@@ -241,60 +247,70 @@ class QuickAction extends StatelessWidget {
   }
 }
 
-class OverviewWidget extends StatelessWidget {
+class OverviewWidget extends StatefulWidget {
   const OverviewWidget({super.key});
 
   @override
+  State<OverviewWidget> createState() => _OverviewWidgetState();
+}
+
+class _OverviewWidgetState extends State<OverviewWidget> {
+  @override
   Widget build(BuildContext context) {
-    return Column(
-      spacing: 12.h,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Row(
-          spacing: 12.w,
-          crossAxisAlignment: CrossAxisAlignment.center,
+    return BlocBuilder<DashboardBloc, DashboardState>(
+      builder: (context, state) {
+        final overview = state.overview;
+        return Column(
+          spacing: 12.h,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Expanded(
-              child: OverviewSubWidget(
-                title: "Total users",
-                value: formatAmount(24),
-                color: isDark() ? AppColors.navyBlue : AppColors.dynamic,
-                icon: AssetsSvgIcons.userGroup,
-              ),
+            Row(
+              spacing: 12.w,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: OverviewSubWidget(
+                    title: "Total users",
+                    value: formatAmount(overview.totalUsers),
+                    color: isDark() ? AppColors.navyBlue : AppColors.dynamic,
+                    icon: AssetsSvgIcons.userGroup,
+                  ),
+                ),
+                Expanded(
+                  child: OverviewSubWidget(
+                    title: "Total Referrals",
+                    value: formatAmount(overview.totalReferrals),
+                    color: AppColors.orange,
+                    icon: AssetsSvgIcons.stickyNote,
+                  ),
+                ),
+              ],
             ),
-            Expanded(
-              child: OverviewSubWidget(
-                title: "Total Referrals",
-                value: formatAmount(24),
-                color: AppColors.orange,
-                icon: AssetsSvgIcons.stickyNote,
-              ),
+            Row(
+              spacing: 12.w,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: OverviewSubWidget(
+                    title: "Pending Commission",
+                    value: "£${formatAmount(2300)}",
+                    color: AppColors.primary,
+                    icon: AssetsSvgIcons.pound,
+                  ),
+                ),
+                Expanded(
+                  child: OverviewSubWidget(
+                    title: "Paid Commission",
+                    value: "£${formatAmount(overview.totalPaidSum)}",
+                    color: AppColors.green,
+                    icon: AssetsSvgIcons.checkCircle,
+                  ),
+                ),
+              ],
             ),
           ],
-        ),
-        Row(
-          spacing: 12.w,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(
-              child: OverviewSubWidget(
-                title: "Pending Commission",
-                value: "£${formatAmount(2300)}",
-                color: AppColors.primary,
-                icon: AssetsSvgIcons.pound,
-              ),
-            ),
-            Expanded(
-              child: OverviewSubWidget(
-                title: "Paid Commission",
-                value: "£${formatAmount(2300)}",
-                color: AppColors.green,
-                icon: AssetsSvgIcons.checkCircle,
-              ),
-            ),
-          ],
-        ),
-      ],
+        );
+      },
     );
   }
 }

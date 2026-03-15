@@ -7,11 +7,14 @@ import 'package:thressford_admin/features/settings/presentation/pages/manage_adm
 import '../../../app/view/pages/successful_page.dart';
 import '../../../features/auth/presentation/pages/login_page.dart';
 import '../../../features/onboarding/presentation/pages/splash_screen_page.dart';
-import '../../../features/referral_management/presentation/pages/referral_details_page.dart';
+import '../../../features/referral_management/presentation/pages/referral_management_details_page.dart';
 import '../../../features/referral_management/presentation/pages/referral_management_page.dart';
 import '../../../features/settings/presentation/pages/change_password_page.dart';
 import '../../../features/settings/presentation/pages/settings_page.dart';
 import '../../../features/submissions/presentation/pages/submissions_page.dart';
+import '../../../features/user_management/presentation/pages/user_management_details_page.dart';
+import '../../../features/user_management/presentation/pages/user_management_page.dart';
+import '../../../features/user_management/presentation/pages/user_referrals_page.dart';
 import 'route_name.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
@@ -35,6 +38,25 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return _getPageRoute(
         routeName: settings.name!,
         viewToShow: const PaymentPage(),
+      );
+
+    //USERS MANAGEMENT PAGE
+    case RouteName.userManagementPage:
+      return _getPageRoute(
+        routeName: settings.name!,
+        viewToShow: const UserManagementPage(),
+      );
+    case RouteName.userManagementDetailsPage:
+      final args = settings.arguments! as UserManagementDetailsPageParam;
+      return _getPageRoute(
+        routeName: settings.name!,
+        viewToShow: UserManagementDetailsPage(param: args),
+      );
+    case RouteName.userReferralsPage:
+      final args = settings.arguments! as UserReferralsPageParam;
+      return _getPageRoute(
+        routeName: settings.name!,
+        viewToShow: UserReferralsPage(param: args),
       );
 
     //REFERRAL MANAGEMENT PAGE

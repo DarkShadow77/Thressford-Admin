@@ -133,7 +133,8 @@ class _SubmissionReasonDialogState extends State<SubmissionReasonDialog>
                       children: [
                         Expanded(
                           child: RichText(
-                            textAlign: TextAlign.center,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             text: TextSpan(
                               text: widget.title,
                               style: TextStyles.titleSemiBold20(context),

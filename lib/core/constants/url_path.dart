@@ -1,36 +1,40 @@
 class AuthUrl {
-  static const String login = "public/login.php";
-  static const String register = "public/register.php";
-  static const String resendOtp = "public/resend-otp.php";
-  static const String verifyOtp = "public/verify-otp.php";
-  static const String forgotPassword = "public/forgot-password-otp.php";
-  static const String verifyForgotPassword = "public/verify-forgot-otp.php";
-  static const String resetPassword = "public/reset-password.php";
+  static const String login = "public/admin/login.php";
+  static const String changePassword = "public/admin/change-password.php";
 }
 
-class HomeUrl {
-  static const String getNotifications = "public/all-notifications.php";
+class DashboardUrl {
+  static const String getOverview = "public/admin/dashboard.php";
 }
 
-class ProfileUrl {
-  static const String getProfile = "public/profile.php";
-  static const String updateProfile = "public/update-profile.php";
-  static const String addBankDetails = "public/add-bank-details.php";
-  static const String changePassword = "public/change-password.php";
+class UserUrl {
+  static const String getAllUser = "public/admin/users.php";
+  static const String deleteUser = "public/admin/delete-user.php";
+  static const String updateUserStatus = "public/admin/update_user_status.php";
 }
 
 class ReferralUrl {
-  static const String getReferrals = "public/all-referals.php";
-  static const String addReferrals = "public/add-referal.php";
+  static const String getAllReferrals = "public/admin/all_referals.php";
+  static const String updateCommission = "public/admin/update_commission.php";
+  static const String updateCommissionStatus =
+      "public/admin/update_comm_stat.php";
+  static const String deleteReferral = "public/admin/delete-referral.php";
+  static const String updateReferralAppStatus =
+      "public/admin/update_app_status.php";
+  static const String updateEnrollStatus =
+      "public/admin/update-enroll-status.php";
 }
 
 class WalletUrl {
-  static const String getSummary = "public/wallet/summary.php";
-  static const String requestWithdrawal =
-      "public/wallet/request-withdrawal.php";
-  static const String getTransactionHistory = "public/wallet/transactions.php";
+  static const String getAllTransaction = "public/admin/all_transactions.php";
+  static const String updateTransactionStatus =
+      "public/admin/update-transaction.php";
 }
 
-class NotificationUrl {
-  static const String getNotification = "public/all-notifications.php";
+class AdminUrl {
+  static const String getAllAdmin = "public/admin/admin.php";
+  static const String addAdmin = "public/admin/add_admin.php";
+  static const String deleteAdmin = "public/admin/delete_admin.php";
+  static const String updateAdminStatus =
+      "public/admin/update_admin_status.php";
 }

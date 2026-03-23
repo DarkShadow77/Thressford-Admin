@@ -8,45 +8,43 @@ import 'package:thressford_admin/features/referral_management/data/models/referr
 
 import '../../../../../app/styles/text_styles.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../app/view/widgets/buttons/icon_text_button.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/utils/ui_tool_mix.dart';
-import '../../data/models/response/referral_response_model.dart';
-import '../bloc/referral_bloc.dart';
-import '../widgets/expected_commission_dialog.dart';
+import '../../../referral_management/data/models/response/referral_response_model.dart';
+import '../../../referral_management/presentation/bloc/referral_bloc.dart';
+import '../widgets/approve_submission_dialog.dart';
+import '../widgets/reject_submission_dialog.dart';
 
-class ReferralManagementDetailsPage extends StatefulWidget {
-  const ReferralManagementDetailsPage({super.key, required this.param});
+class SubmissionDetailsPage extends StatefulWidget {
+  const SubmissionDetailsPage({super.key, required this.param});
 
-  final ReferralManagementDetailsPageParam param;
+  final SubmissionDetailsPageParam param;
 
   @override
-  State<ReferralManagementDetailsPage> createState() =>
-      _ReferralManagementDetailsPageState();
+  State<SubmissionDetailsPage> createState() => _SubmissionDetailsPageState();
 }
 
-class _ReferralManagementDetailsPageState
-    extends State<ReferralManagementDetailsPage>
+class _SubmissionDetailsPageState extends State<SubmissionDetailsPage>
     with UIToolMixin {
-  ReferralModel referral = ReferralModel.empty();
+  ReferralModel submission = ReferralModel.empty();
 
   @override
   void initState() {
     super.initState();
-    referral = widget.param.referral;
+    submission = widget.param.submission;
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ReferralBloc, ReferralState>(
       builder: (context, state) {
-        referral = state.referral.firstWhere(
-          (element) => element.id == referral.id,
+        submission = state.referral.firstWhere(
+          (element) => element.id == submission.id,
         );
+        final isAppRejected =
+            submission.appStatus == AppReferralStatus.rejected;
 
-        final isPending = referral.appStatus == AppReferralStatus.pending;
-        final isAppRejected = referral.appStatus == AppReferralStatus.rejected;
-        final isCancelled =
-            referral.enrollStatus == EnrollReferralStatus.cancelled;
         return Scaffold(
           appBar: AppBar(
             titleSpacing: 20.w,
@@ -100,7 +98,7 @@ class _ReferralManagementDetailsPageState
                                 SizedBox(height: 8.h),
                                 RichText(
                                   text: TextSpan(
-                                    text: "#${referral.id.capitalize}",
+                                    text: "#${submission.id.capitalize}",
                                     style: TextStyles.bodyRegular16(
                                       context,
                                       opacity: .5,
@@ -116,30 +114,20 @@ class _ReferralManagementDetailsPageState
                               horizontal: 8.w,
                             ),
                             decoration: BoxDecoration(
-                              color: isPending || isAppRejected
-                                  ? referral.getAppStatusColor().withValues(
-                                      alpha: .1,
-                                    )
-                                  : ReferralModel.getEnrollStatusColor(
-                                      referral.enrollStatus,
-                                    ).withValues(alpha: .1),
+                              color: submission.getAppStatusColor().withValues(
+                                alpha: .1,
+                              ),
                               borderRadius: BorderRadius.circular(1000.r),
                             ),
                             child: RichText(
                               text: TextSpan(
-                                text: isPending || isAppRejected
-                                    ? referral.appStatus.statusString.capitalize
-                                    : referral
-                                          .enrollStatus
-                                          .statusString
-                                          .capitalize,
+                                text: submission
+                                    .appStatus
+                                    .statusString
+                                    .capitalize,
                                 style: TextStyles.smallRegular12(context)
                                     .copyWith(
-                                      color: isPending || isAppRejected
-                                          ? referral.getAppStatusColor()
-                                          : ReferralModel.getEnrollStatusColor(
-                                              referral.enrollStatus,
-                                            ),
+                                      color: submission.getAppStatusColor(),
                                     ),
                               ),
                             ),
@@ -186,17 +174,17 @@ class _ReferralManagementDetailsPageState
                             _buildLabel(
                               context,
                               label: "Full Name",
-                              value: referral.fullName,
+                              value: submission.fullName,
                             ),
                             _buildLabel(
                               context,
                               label: "Email",
-                              value: referral.email,
+                              value: submission.email,
                             ),
                             _buildLabel(
                               context,
                               label: "Phone",
-                              value: referral.phone,
+                              value: submission.phone,
                             ),
                           ],
                         ),
@@ -240,54 +228,19 @@ class _ReferralManagementDetailsPageState
                             _buildLabel(
                               context,
                               label: "Country of Study",
-                              value: referral.country,
+                              value: submission.country,
                             ),
                             _buildLabel(
                               context,
                               label: "Intended Course",
-                              value: referral.course,
+                              value: submission.course,
                             ),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Expanded(
-                                  child: _buildLabel(
-                                    context,
-                                    label: "Expected Commission",
-                                    value:
-                                        "£${formatAmount(double.parse(referral.expectedCommission))}",
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () => expectedCommissionDialog(
-                                    referral: referral,
-                                  ),
-                                  child: Container(
-                                    width: 24.w,
-                                    height: 24.h,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(6.r),
-                                      border: Border.all(
-                                        width: 1.r,
-                                        color: AppColors.dynamic20,
-                                      ),
-                                    ),
-                                    child: Center(
-                                      child: SvgPicture.asset(
-                                        AssetsSvgIcons.plus,
-                                        width: 16.w,
-                                        height: 16.h,
-                                        fit: BoxFit.contain,
-                                        colorFilter: ColorFilter.mode(
-                                          AppColors.dynamic,
-                                          BlendMode.srcIn,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+                            if (submission.additionalNotes.isNotEmpty)
+                              _buildLabel(
+                                context,
+                                label: "Additional Notes",
+                                value: submission.additionalNotes,
+                              ),
                           ],
                         ),
                       ),
@@ -337,7 +290,7 @@ class _ReferralManagementDetailsPageState
                                   child: Center(
                                     child: RichText(
                                       text: TextSpan(
-                                        text: referral.referredBy.substring(
+                                        text: submission.referredBy.substring(
                                           0,
                                           1,
                                         ),
@@ -356,7 +309,7 @@ class _ReferralManagementDetailsPageState
                                     children: [
                                       RichText(
                                         text: TextSpan(
-                                          text: referral.referredBy,
+                                          text: submission.referredBy,
                                           style: TextStyles.bodySemiBold16(
                                             context,
                                             opacity: .65,
@@ -365,7 +318,7 @@ class _ReferralManagementDetailsPageState
                                       ),
                                       RichText(
                                         text: TextSpan(
-                                          text: referral.referrerEmail,
+                                          text: submission.referrerEmail,
                                           style: TextStyles.bodyRegular16(
                                             context,
                                             opacity: .45,
@@ -398,10 +351,7 @@ class _ReferralManagementDetailsPageState
                                     text: "Submitted: ",
                                     children: [
                                       TextSpan(
-                                        text: formatDate(
-                                          referral.updatedAt ??
-                                              referral.createdAt,
-                                        ),
+                                        text: formatDate(submission.createdAt),
                                         style: TextStyles.normalRegular14(
                                           context,
                                         ),
@@ -418,7 +368,7 @@ class _ReferralManagementDetailsPageState
                           ],
                         ),
                       ),
-                      if (referral.adminEnrollNote.isNotEmpty) ...[
+                      if (isAppRejected) ...[
                         SizedBox(height: 24.h),
                         Container(
                           padding: EdgeInsets.symmetric(
@@ -426,9 +376,7 @@ class _ReferralManagementDetailsPageState
                             horizontal: 16.w,
                           ),
                           decoration: BoxDecoration(
-                            color: isCancelled
-                                ? AppColors.orange025
-                                : AppColors.dynamic025,
+                            color: AppColors.orange025,
                             borderRadius: BorderRadius.circular(14.r),
                           ),
                           child: Column(
@@ -445,20 +393,16 @@ class _ReferralManagementDetailsPageState
                                     height: 20.h,
                                     fit: BoxFit.contain,
                                     colorFilter: ColorFilter.mode(
-                                      isCancelled
-                                          ? AppColors.orange50
-                                          : AppColors.dynamic50,
+                                      AppColors.orange50,
                                       BlendMode.srcIn,
                                     ),
                                   ),
                                   RichText(
                                     text: TextSpan(
-                                      text: isCancelled
-                                          ? "Reason for Cancellation"
-                                          : "Admin Notes",
+                                      text: "Reason for Cancellation",
                                       style: TextStyles.normalRegular14(context)
                                           .copyWith(
-                                            color: isCancelled
+                                            color: isAppRejected
                                                 ? AppColors.orange
                                                 : null,
                                           ),
@@ -472,167 +416,69 @@ class _ReferralManagementDetailsPageState
                                   horizontal: 16.w,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: isCancelled
-                                      ? AppColors.orange5
-                                      : AppColors.dynamic05,
+                                  color: AppColors.orange5,
                                   borderRadius: BorderRadius.circular(8.r),
                                 ),
-                                child: Column(
-                                  spacing: 4.h,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    RichText(
-                                      text: TextSpan(
-                                        text: referral.adminEnrollNote,
-                                        style: TextStyles.normalRegular14(
-                                          context,
-                                        ),
-                                      ),
-                                    ),
-                                    Row(
-                                      spacing: 8.w,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        SvgPicture.asset(
-                                          AssetsSvgIcons.calender,
-                                          width: 20.w,
-                                          height: 20.h,
-                                          fit: BoxFit.contain,
-                                          colorFilter: ColorFilter.mode(
-                                            AppColors.dynamic50,
-                                            BlendMode.srcIn,
-                                          ),
-                                        ),
-                                        RichText(
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          text: TextSpan(
-                                            text: "Submitted: ",
-                                            children: [
-                                              TextSpan(
-                                                text: formatDate(
-                                                  referral.enrollModDate ??
-                                                      DateTime.now()
-                                                          .toIso8601String(),
-                                                ),
-                                              ),
-                                            ],
-                                            style: TextStyles.normalRegular14(
-                                              context,
-                                              opacity: .5,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                child: RichText(
+                                  text: TextSpan(
+                                    text: submission.adminAppNote,
+                                    style: TextStyles.normalRegular14(context),
+                                  ),
                                 ),
                               ),
                             ],
                           ),
                         ),
                       ],
-                      if (referral.additionalNotes.isNotEmpty) ...[
-                        SizedBox(height: 24.h),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            vertical: 16.h,
-                            horizontal: 16.w,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.dynamic025,
-                            borderRadius: BorderRadius.circular(14.r),
-                          ),
-                          child: Column(
-                            spacing: 12.h,
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Row(
-                                spacing: 8.w,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  SvgPicture.asset(
-                                    AssetsSvgIcons.note,
-                                    width: 20.w,
-                                    height: 20.h,
-                                    fit: BoxFit.contain,
-                                  ),
-                                  RichText(
-                                    text: TextSpan(
-                                      text: "Internal Notes",
-                                      style: TextStyles.normalRegular14(
-                                        context,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                      SizedBox(height: 32.h),
+
+                      Row(
+                        spacing: 10.w,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          if (submission.appStatus ==
+                                  AppReferralStatus.pending ||
+                              submission.appStatus ==
+                                  AppReferralStatus.approved)
+                            Expanded(
+                              child: IconTextButton(
+                                onPressed: () {
+                                  rejectSubmissionDialog(
+                                    submission: submission,
+                                  );
+                                },
+                                height: 42,
+                                text: "Reject",
+                                iconWidget: Icon(
+                                  Icons.cancel_outlined,
+                                  color: AppColors.error,
+                                  size: 20.sp,
+                                ),
+                                textColor: AppColors.error,
+                                color: AppColors.error5,
                               ),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  vertical: 16.h,
-                                  horizontal: 16.w,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: AppColors.dynamic05,
-                                  borderRadius: BorderRadius.circular(8.r),
-                                ),
-                                child: Column(
-                                  spacing: 4.h,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    RichText(
-                                      text: TextSpan(
-                                        text: referral.additionalNotes,
-                                        style: TextStyles.normalRegular14(
-                                          context,
-                                        ),
-                                      ),
-                                    ),
-                                    Row(
-                                      spacing: 8.w,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        SvgPicture.asset(
-                                          AssetsSvgIcons.calender,
-                                          width: 20.w,
-                                          height: 20.h,
-                                          fit: BoxFit.contain,
-                                          colorFilter: ColorFilter.mode(
-                                            AppColors.dynamic50,
-                                            BlendMode.srcIn,
-                                          ),
-                                        ),
-                                        RichText(
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          text: TextSpan(
-                                            text: "Submitted: ",
-                                            children: [
-                                              TextSpan(
-                                                text: formatDate(
-                                                  referral.additionalNoteSubmittedAt ??
-                                                      DateTime.now()
-                                                          .toIso8601String(),
-                                                ),
-                                              ),
-                                            ],
-                                            style: TextStyles.normalRegular14(
-                                              context,
-                                              opacity: .5,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                            ),
+                          if (submission.appStatus ==
+                                  AppReferralStatus.pending ||
+                              submission.appStatus ==
+                                  AppReferralStatus.rejected)
+                            Expanded(
+                              child: IconTextButton(
+                                onPressed: () {
+                                  approveSubmissionDialog(
+                                    submission: submission,
+                                  );
+                                },
+                                height: 42,
+                                text: "Approve",
+                                icon: AssetsSvgIcons.checkCircle,
+                                iconColor: AppColors.white,
+                                textColor: AppColors.white,
+                                color: AppColors.green,
                               ),
-                            ],
-                          ),
-                        ),
-                      ],
+                            ),
+                        ],
+                      ),
                       SizedBox(height: 32.h),
                     ]),
                   ),
@@ -671,8 +517,8 @@ class _ReferralManagementDetailsPageState
   }
 }
 
-class ReferralManagementDetailsPageParam {
-  final ReferralModel referral;
+class SubmissionDetailsPageParam {
+  final ReferralModel submission;
 
-  ReferralManagementDetailsPageParam({required this.referral});
+  SubmissionDetailsPageParam({required this.submission});
 }

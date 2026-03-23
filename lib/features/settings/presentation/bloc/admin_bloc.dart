@@ -14,7 +14,7 @@ part 'admin_state.dart';
 class AdminBloc extends Bloc<AdminEvent, AdminState> {
   final AdminRepository repo;
 
-  AdminBloc({required this.repo}) : super(AdminInitialState(referral: [])) {
+  AdminBloc({required this.repo}) : super(AdminInitialState(admins: [])) {
     on<GetAllAdminEvent>(_onGetAllAdmin);
     on<AddAdminEvent>(_onAddAdmin);
     on<DeleteAdminEvent>(_onDeleteAdmin);
@@ -25,9 +25,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     GetAllAdminEvent event,
     Emitter<AdminState> emit,
   ) async {
-    emit(
-      AdminLoadingState(type: AdminType.getAllAdmins, referral: state.referral),
-    );
+    emit(AdminLoadingState(type: AdminType.getAllAdmins, admins: state.admins));
 
     final response = await repo.getAllAdmins();
 
@@ -36,16 +34,16 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
         AdminFailureState(
           type: AdminType.getAllAdmins,
           message: failure.toString(),
-          referral: state.referral,
+          admins: state.admins,
         ),
       ),
       (response) {
-        emit(state.copyWith(referral: response.responseBody));
+        emit(state.copyWith(admins: response.responseBody));
         emit(
           AdminSuccessState(
             type: AdminType.getAllAdmins,
             message: response.responseMessage!,
-            referral: response.responseBody!,
+            admins: response.responseBody!,
           ),
         );
       },
@@ -56,7 +54,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     AddAdminEvent event,
     Emitter<AdminState> emit,
   ) async {
-    emit(AdminLoadingState(type: AdminType.addAdmin, referral: state.referral));
+    emit(AdminLoadingState(type: AdminType.addAdmin, admins: state.admins));
 
     final response = await repo.addAdmin(request: event.request);
 
@@ -65,14 +63,14 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
         AdminFailureState(
           type: AdminType.addAdmin,
           message: failure.toString(),
-          referral: state.referral,
+          admins: state.admins,
         ),
       ),
       (response) => emit(
         AdminSuccessState(
           type: AdminType.addAdmin,
           message: response.responseMessage!,
-          referral: state.referral,
+          admins: state.admins,
         ),
       ),
     );
@@ -82,9 +80,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     DeleteAdminEvent event,
     Emitter<AdminState> emit,
   ) async {
-    emit(
-      AdminLoadingState(type: AdminType.deleteAdmin, referral: state.referral),
-    );
+    emit(AdminLoadingState(type: AdminType.deleteAdmin, admins: state.admins));
 
     final response = await repo.deleteAdmin(request: event.request);
 
@@ -93,14 +89,14 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
         AdminFailureState(
           type: AdminType.deleteAdmin,
           message: failure.toString(),
-          referral: state.referral,
+          admins: state.admins,
         ),
       ),
       (response) => emit(
         AdminSuccessState(
           type: AdminType.deleteAdmin,
           message: response.responseMessage!,
-          referral: state.referral,
+          admins: state.admins,
         ),
       ),
     );
@@ -113,7 +109,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     emit(
       AdminLoadingState(
         type: AdminType.updateAdminStatus,
-        referral: state.referral,
+        admins: state.admins,
       ),
     );
 
@@ -124,14 +120,14 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
         AdminFailureState(
           type: AdminType.updateAdminStatus,
           message: failure.toString(),
-          referral: state.referral,
+          admins: state.admins,
         ),
       ),
       (response) => emit(
         AdminSuccessState(
           type: AdminType.updateAdminStatus,
           message: response.responseMessage!,
-          referral: state.referral,
+          admins: state.admins,
         ),
       ),
     );

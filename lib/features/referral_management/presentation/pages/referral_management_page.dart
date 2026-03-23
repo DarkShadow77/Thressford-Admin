@@ -12,6 +12,7 @@ import '../../../../app/styles/text_styles.dart';
 import '../../../../app/view/widgets/input/search_text_input.dart';
 import '../../../../app/view/widgets/loading/outer_loading.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/utils/helpers.dart';
 import '../../../../core/utils/ui_tool_mix.dart';
 import '../../data/models/referral_status_enum.dart';
 import '../bloc/referral_bloc.dart';
@@ -41,6 +42,7 @@ class _ReferralManagementPageState extends State<ReferralManagementPage>
   @override
   void initState() {
     super.initState();
+    context.read<ReferralBloc>().add(GetAllReferralEvent());
     searchData.addAll(referrals);
   }
 
@@ -211,7 +213,7 @@ class _ReferralManagementPageState extends State<ReferralManagementPage>
                             RichText(
                               text: TextSpan(
                                 text:
-                                    "${searchData.length} total referral${searchData.length != 1 ? 's' : ''}",
+                                    "${formatAmount(searchData.length)} total referral${searchData.length != 1 ? 's' : ''}",
                                 style: TextStyles.bodyRegular16(
                                   context,
                                   opacity: .75,

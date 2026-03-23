@@ -121,7 +121,7 @@ class AppColors {
   static Color get error50 => error.withValues(alpha: .50);
   static Color get error39 => error.withValues(alpha: .39);
   static Color get error20 => error.withValues(alpha: .20);
-  static Color get error11 => error.withValues(alpha: .11);
+  static Color get error10 => error.withValues(alpha: .10);
   static Color get error5 => error.withValues(alpha: .05);
 
   //State-Colors ---NavyBlue

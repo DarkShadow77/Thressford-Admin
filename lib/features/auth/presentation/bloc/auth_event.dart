@@ -13,3 +13,11 @@ class LoginEvent extends AuthEvent {
   @override
   List<Object?> get props => [request];
 }
+
+class ChangePasswordEvent extends AuthEvent {
+  final ChangePasswordRequestModel request;
+
+  const ChangePasswordEvent({required this.request});
+  @override
+  List<Object?> get props => [request];
+}

@@ -1,8 +1,10 @@
+import '../../../../settings/data/models/admin_enum.dart';
+
 class UserProfile {
   final String token;
   final String fullName;
   final String email;
-  final String role;
+  final AdminRole role;
 
   UserProfile({
     required this.token,
@@ -16,11 +18,16 @@ class UserProfile {
       token: json['token'] ?? '',
       fullName: json['fullname'] ?? '',
       email: json['email'] ?? '',
-      role: json['role'] ?? '',
+      role: AdminRoleExtension.fromString(json['role'] ?? ""),
     );
   }
 
   factory UserProfile.empty() {
-    return UserProfile(token: "", fullName: "", email: "", role: "");
+    return UserProfile(
+      token: "",
+      fullName: "",
+      email: "",
+      role: AdminRole.admin,
+    );
   }
 }

@@ -1,9 +1,15 @@
+import 'dart:ui';
+
+import 'package:thressford_admin/features/settings/data/models/admin_enum.dart';
+
+import '../../../../../core/constants/app_colors.dart';
+
 class AdminModel {
   final String id;
   final String fullName;
   final String email;
-  final String role;
-  final String status;
+  final AdminRole role;
+  final AdminStatus status;
   final String createdAt;
   final String? statusDate;
   final String isDeleted;
@@ -24,8 +30,8 @@ class AdminModel {
       id: json['id'] ?? "",
       fullName: json['fullname'] ?? '',
       email: json['email'] ?? '',
-      role: json['role'] ?? '',
-      status: json['status'] ?? "",
+      role: AdminRoleExtension.fromString(json['role'] ?? ""),
+      status: AdminStatusExtension.fromString(json['status'] ?? ""),
       createdAt: json['create_date'] ?? DateTime.now().toIso8601String(),
       statusDate: json['status_date'],
       isDeleted: json['is_del'] ?? '',
@@ -37,11 +43,18 @@ class AdminModel {
       id: "",
       fullName: '',
       email: '',
-      role: '',
-      status: "",
+      role: AdminRole.admin,
+      status: AdminStatus.active,
       createdAt: DateTime.now().toIso8601String(),
       statusDate: null,
       isDeleted: '0',
     );
+  }
+
+  Color getAdminStatusColor() {
+    return switch (status) {
+      AdminStatus.active => AppColors.green,
+      AdminStatus.inactive => AppColors.orange,
+    };
   }
 }

@@ -4,20 +4,20 @@ enum AdminType { getAllAdmins, addAdmin, deleteAdmin, updateAdminStatus }
 
 @immutable
 class AdminState extends Equatable {
-  final List<AdminModel> referral;
+  final List<AdminModel> admins;
 
-  const AdminState({required this.referral});
+  const AdminState({required this.admins});
 
-  AdminState copyWith({List<AdminModel>? referral}) {
-    return AdminState(referral: referral ?? this.referral);
+  AdminState copyWith({List<AdminModel>? admins}) {
+    return AdminState(admins: admins ?? this.admins);
   }
 
   @override
-  List<Object?> get props => [referral];
+  List<Object?> get props => [admins];
 }
 
 final class AdminInitialState extends AdminState {
-  const AdminInitialState({required super.referral});
+  const AdminInitialState({required super.admins});
 
   @override
   List<Object> get props => [];
@@ -30,7 +30,7 @@ class AdminLoadingState extends AdminState {
   const AdminLoadingState({
     required this.type,
     this.data,
-    required super.referral,
+    required super.admins,
   });
   @override
   List<Object?> get props => [type, data];
@@ -45,7 +45,7 @@ class AdminSuccessState extends AdminState {
     required this.message,
     required this.type,
     this.data,
-    required super.referral,
+    required super.admins,
   });
   @override
   List<Object?> get props => [message, type, data];
@@ -60,7 +60,7 @@ class AdminFailureState extends AdminState {
     required this.message,
     required this.type,
     this.data,
-    required super.referral,
+    required super.admins,
   });
   @override
   List<Object?> get props => [type, message, data];

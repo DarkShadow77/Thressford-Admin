@@ -195,47 +195,5 @@ class _SubmissionReasonDialogState extends State<SubmissionReasonDialog>
     );
   }
 }
-
-class BankDetailsNotice extends StatelessWidget {
-  const BankDetailsNotice({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-      decoration: BoxDecoration(
-        color: AppColors.orange10,
-        border: Border.all(width: .5.w, color: AppColors.orange),
-        borderRadius: BorderRadius.circular(14.r),
-      ),
-      child: Row(
-        spacing: 16.w,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(
-            Icons.error_outline_rounded,
-            size: 24.sp,
-            color: AppColors.dynamic,
-          ),
-          Expanded(
-            child: Column(
-              spacing: 2.h,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                RichText(
-                  text: TextSpan(
-                    text:
-                        "Funds will be deposited to your GTB Pounds account within 2-3 business days after admin approval.",
-                    style: TextStyles.cardRegular10(context),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+ 
 */

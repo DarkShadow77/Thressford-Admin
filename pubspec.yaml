@@ -59,7 +59,7 @@ dependencies:
   pinput: ^5.0.1
   local_auth: ^2.3.0
   timer_count_down: ^2.2.2
-  share_plus: ^11.0.0
+  share_plus: ^12.0.1
   intl: ^0.20.2
   equatable: ^2.0.7
   image_picker: ^1.1.2

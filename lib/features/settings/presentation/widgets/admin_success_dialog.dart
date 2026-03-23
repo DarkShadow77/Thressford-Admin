@@ -8,32 +8,37 @@ import 'package:hugeicons/hugeicons.dart';
 import '../../../../../app/styles/text_styles.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../app/view/widgets/buttons/icon_text_button.dart';
+import '../../../../core/constants/app_assets.dart';
 import '../../../../core/utils/helpers.dart';
 import '../../../../core/utils/ui_tool_mix.dart';
-import '../../../referral_management/data/models/response/referral_response_model.dart';
-import 'reason_dialog.dart';
 
-Future<dynamic> rejectSubmissionDialog({
-  required ReferralModel submission,
+Future<dynamic> adminSuccessDialog({
+  required String title,
+  required String subTitle,
 }) async {
   return Get.dialog(
-    name: "reject_submission_dialog",
+    name: "admin_success_dialog",
     barrierColor: Colors.transparent,
     barrierDismissible: true,
-    RejectSubmissionDialog(submission: submission),
+    AdminSuccessDialog(title: title, subTitle: subTitle),
   );
 }
 
-class RejectSubmissionDialog extends StatefulWidget {
-  const RejectSubmissionDialog({super.key, required this.submission});
+class AdminSuccessDialog extends StatefulWidget {
+  const AdminSuccessDialog({
+    super.key,
+    required this.title,
+    required this.subTitle,
+  });
 
-  final ReferralModel submission;
+  final String title;
+  final String subTitle;
 
   @override
-  State<RejectSubmissionDialog> createState() => _RejectSubmissionDialogState();
+  State<AdminSuccessDialog> createState() => _AdminSuccessDialogState();
 }
 
-class _RejectSubmissionDialogState extends State<RejectSubmissionDialog>
+class _AdminSuccessDialogState extends State<AdminSuccessDialog>
     with UIToolMixin {
   @override
   Widget build(BuildContext context) {
@@ -84,30 +89,17 @@ class _RejectSubmissionDialogState extends State<RejectSubmissionDialog>
                     Column(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Container(
-                          height: 40.r,
-                          width: 40.r,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: AppColors.error5,
-                            shape: BoxShape.circle,
-                          ),
-                          child: IconButton(
-                            onPressed: () => Navigator.pop(context),
-                            icon: HugeIcon(
-                              icon: HugeIcons.strokeRoundedCancel01,
-                              color: AppColors.error,
-                              size: 12.sp,
-                            ),
-                          ),
+                        Image.asset(
+                          AssetsPngImages.checkmark,
+                          width: 48.w,
+                          height: 48.h,
                         ),
                         SizedBox(height: 24.h),
                         RichText(
                           textAlign: TextAlign.center,
                           text: TextSpan(
-                            text: "Reject Submission?",
+                            text: widget.title,
                             style: TextStyles.titleSemiBold20(context),
                           ),
                         ),
@@ -115,8 +107,7 @@ class _RejectSubmissionDialogState extends State<RejectSubmissionDialog>
                         RichText(
                           textAlign: TextAlign.center,
                           text: TextSpan(
-                            text:
-                                "Are you sure you want to reject this referral submission?",
+                            text: widget.subTitle,
                             style: TextStyles.normalRegular14(
                               context,
                               opacity: .5,
@@ -124,34 +115,10 @@ class _RejectSubmissionDialogState extends State<RejectSubmissionDialog>
                           ),
                         ),
                         SizedBox(height: 56.h),
-                        Row(
-                          spacing: 10.w,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              child: IconTextButton(
-                                height: 53,
-                                onPressed: () => Navigator.pop(context),
-                                text: "Cancel",
-                                color: surfaceColor(),
-                                textColor: AppColors.dynamic,
-                                borderColor: AppColors.dynamic30,
-                              ),
-                            ),
-                            Expanded(
-                              child: IconTextButton(
-                                height: 53,
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                  submissionRejectionReasonDialog(
-                                    submission: widget.submission,
-                                    title: "Reason for Rejection",
-                                  );
-                                },
-                                text: "Yes, Reject",
-                              ),
-                            ),
-                          ],
+                        IconTextButton(
+                          height: 53,
+                          onPressed: () => Navigator.pop(context),
+                          text: "Close",
                         ),
                         SizedBox(height: 10.h),
                       ],

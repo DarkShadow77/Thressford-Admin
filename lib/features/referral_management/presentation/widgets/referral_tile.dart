@@ -73,6 +73,8 @@ class ReferralTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isPending = referral.appStatus == AppReferralStatus.pending;
+    final isAppRejected = referral.appStatus == AppReferralStatus.rejected;
     final bool isCancelled =
         referral.enrollStatus == EnrollReferralStatus.cancelled;
     return GestureDetector(
@@ -126,18 +128,24 @@ class ReferralTile extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                   decoration: BoxDecoration(
-                    color: ReferralModel.getEnrollStatusColor(
-                      referral.enrollStatus,
-                    ).withValues(alpha: .05),
+                    color: isPending || isAppRejected
+                        ? referral.getAppStatusColor().withValues(alpha: .1)
+                        : ReferralModel.getEnrollStatusColor(
+                            referral.enrollStatus,
+                          ).withValues(alpha: .05),
                     borderRadius: BorderRadius.circular(100.r),
                   ),
                   child: RichText(
                     text: TextSpan(
-                      text: referral.enrollStatus.statusString.capitalize,
+                      text: isPending || isAppRejected
+                          ? referral.appStatus.statusString.capitalize
+                          : referral.enrollStatus.statusString.capitalize,
                       style: TextStyles.smallRegular12(context).copyWith(
-                        color: ReferralModel.getEnrollStatusColor(
-                          referral.enrollStatus,
-                        ),
+                        color: isPending || isAppRejected
+                            ? referral.getAppStatusColor()
+                            : ReferralModel.getEnrollStatusColor(
+                                referral.enrollStatus,
+                              ),
                       ),
                     ),
                   ),
@@ -284,9 +292,7 @@ class ReferralTile extends StatelessWidget {
                             text: TextSpan(
                               children: [
                                 TextSpan(
-                                  text: formatDate(
-                                    referral.updatedAt ?? referral.createdAt,
-                                  ),
+                                  text: formatDate(referral.createdAt),
                                   style: TextStyles.normalRegular14(context),
                                 ),
                               ],
@@ -311,16 +317,13 @@ class ReferralTile extends StatelessWidget {
                 ),
               ],
             ),
-            if (referral.adminEnrollNote.isNotEmpty)
+            if (isAppRejected || isCancelled)
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
                 decoration: BoxDecoration(
-                  color: isCancelled ? AppColors.orange5 : AppColors.dynamic05,
+                  color: AppColors.orange5,
                   borderRadius: BorderRadius.circular(14.r),
-                  border: Border.all(
-                    width: 1.w,
-                    color: isCancelled ? AppColors.orange : AppColors.dynamic20,
-                  ),
+                  border: Border.all(width: 1.w, color: AppColors.orange),
                 ),
                 child: Column(
                   spacing: 8.h,
@@ -330,14 +333,46 @@ class ReferralTile extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       text: TextSpan(
-                        text: isCancelled
-                            ? "Reason for Cancellation"
-                            : "Admin Note",
-                        style: TextStyles.smallRegular12(context).copyWith(
-                          color: isCancelled
-                              ? AppColors.orange
-                              : AppColors.dynamic,
-                        ),
+                        text:
+                            "Reason for ${isAppRejected ? "Rejection" : "Cancellation"}",
+                        style: TextStyles.smallRegular12(
+                          context,
+                        ).copyWith(color: AppColors.orange),
+                      ),
+                    ),
+                    RichText(
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      text: TextSpan(
+                        text: isAppRejected
+                            ? referral.adminAppNote
+                            : referral.adminEnrollNote,
+                        style: TextStyles.smallRegular12(context, opacity: .5),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            else if (referral.adminEnrollNote.isNotEmpty)
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+                decoration: BoxDecoration(
+                  color: AppColors.dynamic05,
+                  borderRadius: BorderRadius.circular(14.r),
+                  border: Border.all(width: 1.w, color: AppColors.dynamic20),
+                ),
+                child: Column(
+                  spacing: 8.h,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    RichText(
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      text: TextSpan(
+                        text: "Admin Note",
+                        style: TextStyles.smallRegular12(
+                          context,
+                        ).copyWith(color: AppColors.dynamic),
                       ),
                     ),
                     RichText(

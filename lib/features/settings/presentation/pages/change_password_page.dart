@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../app/styles/text_styles.dart';
@@ -9,7 +10,10 @@ import '../../../../app/view/widgets/buttons/icon_text_button.dart';
 import '../../../../app/view/widgets/input/input_title.dart';
 import '../../../../core/constants/enums/app_enum.dart';
 import '../../../../core/constants/navigators/route_name.dart';
+import '../../../../core/utils/local_storage.dart';
 import '../../../../core/utils/ui_tool_mix.dart';
+import '../../../auth/data/models/request/change_password_request_model.dart';
+import '../../../auth/presentation/bloc/auth_bloc.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({super.key});
@@ -65,71 +69,49 @@ class _ChangePasswordPageState extends State<ChangePasswordPage>
     _validateForm();
     _isFormValid = _formValidation();
     if (_isFormValid) {
-      setState(() => loading = true);
-
-      Future.delayed(Duration(seconds: 2), () {
-        setState(() => loading = false);
-
-        Navigator.pushNamed(
-          context,
-          RouteName.successfulPage,
-          arguments: SuccessfulPageParam(
-            title: "Password Saved",
-            subTitle: "Admin password has been updated successfully.",
-            btnText: "Back to Dashboard",
-            onTap: () {
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                RouteName.dashboardPage,
-                (route) => false,
-              );
-            },
-          ),
-        );
-      });
-      /*context.read<ProfileBloc>().add(
+      context.read<AuthBloc>().add(
         ChangePasswordEvent(
           request: ChangePasswordRequestModel(
             token: await LocalStorageHelper().getAccessToken() ?? "",
-            oldPassword: _oldPasswordController.text.trim(),
-            newPassword: _passwordController.text.trim(),
-            confirmNewPassword: _confirmPasswordController.text.trim(),
+            oldPass: _oldPasswordController.text.trim(),
+            newPass: _passwordController.text.trim(),
+            confirmNewPass: _confirmPasswordController.text.trim(),
           ),
         ),
-      );*/
+      );
     }
   }
 
-  /* void _loadingProfileState(BuildContext context, ProfileLoadingState state) {
-    if (state.type == ProfileType.changePassword) {
+  void _loadingAuthState(BuildContext context, AuthLoadingState state) {
+    if (state.type == AuthType.changePassword) {
       setState(() => loading = true);
     }
   }
 
-  void _successProfileState(BuildContext context, ProfileSuccessState state) {
-    if (state.type == ProfileType.changePassword) {
+  void _successAuthState(BuildContext context, AuthSuccessState state) {
+    if (state.type == AuthType.changePassword) {
       setState(() => loading = false);
-
-      context.read<ProfileBloc>().add(GetProfileEvent());
 
       Navigator.pushNamed(
         context,
         RouteName.successfulPage,
         arguments: SuccessfulPageParam(
           title: "Password Saved",
-          subTitle: "Your profile password has been updated successfully.",
+          subTitle: "Admin password has been updated successfully.",
           btnText: "Back to Dashboard",
           onTap: () {
-            Navigator.of(
-              context,
-            ).pushNamedAndRemoveUntil(RouteName.profilePage, (route) => false);
+            Navigator.of(context).pushNamedAndRemoveUntil(
+              RouteName.dashboardPage,
+              (route) => false,
+            );
           },
         ),
       );
     }
   }
 
-  void _failedProfileState(BuildContext context, ProfileFailureState state) {
-    if (state.type == ProfileType.changePassword) {
+  void _failedAuthState(BuildContext context, AuthFailureState state) {
+    if (state.type == AuthType.changePassword) {
       setState(() => loading = false);
       showMessage(
         context,
@@ -139,153 +121,153 @@ class _ChangePasswordPageState extends State<ChangePasswordPage>
       );
     }
   }
-*/
+
   @override
   Widget build(BuildContext context) {
-    /*return BlocListener<ProfileBloc, ProfileState>(
+    return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
-        if (state is ProfileLoadingState) {
-          _loadingProfileState(context, state);
-        } else if (state is ProfileSuccessState) {
-          _successProfileState(context, state);
-        } else if (state is ProfileFailureState) {
-          _failedProfileState(context, state);
+        if (state is AuthLoadingState) {
+          _loadingAuthState(context, state);
+        } else if (state is AuthSuccessState) {
+          _successAuthState(context, state);
+        } else if (state is AuthFailureState) {
+          _failedAuthState(context, state);
         }
       },
-      child:
-    );*/
-    return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Container(
-            height: 150.h + MediaQuery.of(context).padding.top,
-            padding: EdgeInsets.symmetric(
-              horizontal: 20.w,
-              vertical: MediaQuery.of(context).padding.top,
-            ),
-            decoration: BoxDecoration(
-              color: AppColors.navyBlue,
-              borderRadius: BorderRadius.vertical(
-                bottom: Radius.circular(32.r),
+      child: Scaffold(
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              height: 150.h + MediaQuery.of(context).padding.top,
+              padding: EdgeInsets.symmetric(
+                horizontal: 20.w,
+                vertical: MediaQuery.of(context).padding.top,
               ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: kToolbarHeight + 20.h,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: Container(
-                          width: 40.w,
-                          height: 40.h,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: AppColors.white,
-                          ),
-                          child: Center(
-                            child: Icon(
-                              Icons.arrow_back_rounded,
-                              size: 24.sp,
-                              color: AppColors.navyBlue,
+              decoration: BoxDecoration(
+                color: AppColors.navyBlue,
+                borderRadius: BorderRadius.vertical(
+                  bottom: Radius.circular(32.r),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: kToolbarHeight + 20.h,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: () => Navigator.pop(context),
+                          child: Container(
+                            width: 40.w,
+                            height: 40.h,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: AppColors.white,
+                            ),
+                            child: Center(
+                              child: Icon(
+                                Icons.arrow_back_rounded,
+                                size: 24.sp,
+                                color: AppColors.navyBlue,
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                RichText(
-                  text: TextSpan(
-                    text: "Change Password",
-                    style: TextStyles.bodySemiBold16(
-                      context,
-                    ).copyWith(color: AppColors.white),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: CustomScrollView(
-              physics: BouncingScrollPhysics(),
-              slivers: [
-                SliverPadding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w),
-                  sliver: SliverList(
-                    delegate: SliverChildListDelegate([
-                      SizedBox(height: 40.h),
-                      InputTitle(text: "Old Password"),
-                      TextInputField(
-                        enabled: !loading,
-                        isPassword: true,
-                        errorBool: !_isFormValid && !_isOldPassValid,
-                        controller: _oldPasswordController,
-                        hintText: 'Enter old password',
-                        textInputType: TextInputType.visiblePassword,
-                        onChanged: (value) => _validateForm(),
-                      ),
-                      SizedBox(height: 16.h),
-                      InputTitle(text: "New Password"),
-                      TextInputField(
-                        enabled: !loading,
-                        isPassword: true,
-                        errorBool: !_isFormValid && !_isPassValid,
-                        controller: _passwordController,
-                        hintText: 'Enter your password',
-                        textInputType: TextInputType.visiblePassword,
-                        onChanged: (value) => _validateForm(),
-                      ),
-                      SizedBox(height: 16.h),
-                      InputTitle(text: "Confirm Password"),
-                      TextInputField(
-                        enabled: !loading,
-                        isPassword: true,
-                        errorBool: !_isFormValid && !_isConfirmPassValid,
-                        controller: _confirmPasswordController,
-                        hintText: 'Enter new password again',
-                        textInputType: TextInputType.visiblePassword,
-                        onChanged: (value) => _validateForm(),
-                      ),
-                      SizedBox(height: 32.h),
-                    ]),
-                  ),
-                ),
-                SliverPadding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w),
-                  sliver: SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        IconTextButton(
-                          onPressed: _submit,
-                          text: "Save Changes",
-                          color: _formValidation()
-                              ? AppColors.primary
-                              : AppColors.dynamic10,
-                          buttonState: loading
-                              ? AppButtonState.loading
-                              : AppButtonState.idle,
-                        ),
-                        SizedBox(
-                          height:
-                              20.h + MediaQuery.of(context).viewPadding.bottom,
                         ),
                       ],
                     ),
                   ),
-                ),
-              ],
+                  RichText(
+                    text: TextSpan(
+                      text: "Change Password",
+                      style: TextStyles.bodySemiBold16(
+                        context,
+                      ).copyWith(color: AppColors.white),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+            Expanded(
+              child: CustomScrollView(
+                physics: BouncingScrollPhysics(),
+                slivers: [
+                  SliverPadding(
+                    padding: EdgeInsets.symmetric(horizontal: 20.w),
+                    sliver: SliverList(
+                      delegate: SliverChildListDelegate([
+                        SizedBox(height: 40.h),
+                        InputTitle(text: "Old Password"),
+                        TextInputField(
+                          enabled: !loading,
+                          isPassword: true,
+                          errorBool: !_isFormValid && !_isOldPassValid,
+                          controller: _oldPasswordController,
+                          hintText: 'Enter old password',
+                          textInputType: TextInputType.visiblePassword,
+                          onChanged: (value) => _validateForm(),
+                        ),
+                        SizedBox(height: 16.h),
+                        InputTitle(text: "New Password"),
+                        TextInputField(
+                          enabled: !loading,
+                          isPassword: true,
+                          errorBool: !_isFormValid && !_isPassValid,
+                          controller: _passwordController,
+                          hintText: 'Enter your password',
+                          textInputType: TextInputType.visiblePassword,
+                          onChanged: (value) => _validateForm(),
+                        ),
+                        SizedBox(height: 16.h),
+                        InputTitle(text: "Confirm Password"),
+                        TextInputField(
+                          enabled: !loading,
+                          isPassword: true,
+                          errorBool: !_isFormValid && !_isConfirmPassValid,
+                          controller: _confirmPasswordController,
+                          hintText: 'Enter new password again',
+                          textInputType: TextInputType.visiblePassword,
+                          onChanged: (value) => _validateForm(),
+                        ),
+                        SizedBox(height: 32.h),
+                      ]),
+                    ),
+                  ),
+                  SliverPadding(
+                    padding: EdgeInsets.symmetric(horizontal: 20.w),
+                    sliver: SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconTextButton(
+                            onPressed: _submit,
+                            text: "Save Changes",
+                            color: _formValidation()
+                                ? AppColors.primary
+                                : AppColors.dynamic10,
+                            buttonState: loading
+                                ? AppButtonState.loading
+                                : AppButtonState.idle,
+                          ),
+                          SizedBox(
+                            height:
+                                20.h +
+                                MediaQuery.of(context).viewPadding.bottom,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

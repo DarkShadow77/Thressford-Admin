@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:thressford_admin/features/submissions/data/models/response/submission_response_model.dart';
 
 import '../../../../../app/styles/text_styles.dart';
 import '../../../../../core/constants/app_colors.dart';
@@ -12,9 +11,10 @@ import '../../../../app/view/widgets/buttons/icon_text_button.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/utils/helpers.dart';
 import '../../../../core/utils/ui_tool_mix.dart';
+import '../../../referral_management/data/models/response/referral_response_model.dart';
 
 Future<dynamic> submissionSuccessfulDialog({
-  required SubmissionModel submission,
+  required ReferralModel submission,
   required String title,
   required String subTitle,
 }) async {
@@ -38,7 +38,7 @@ class SubmissionSuccessfulDialog extends StatefulWidget {
     required this.subTitle,
   });
 
-  final SubmissionModel submission;
+  final ReferralModel submission;
   final String title;
   final String subTitle;
 
@@ -136,49 +136,6 @@ class _SubmissionSuccessfulDialogState extends State<SubmissionSuccessfulDialog>
                 ),
               ),
             ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class BankDetailsNotice extends StatelessWidget {
-  const BankDetailsNotice({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-      decoration: BoxDecoration(
-        color: AppColors.orange10,
-        border: Border.all(width: .5.w, color: AppColors.orange),
-        borderRadius: BorderRadius.circular(14.r),
-      ),
-      child: Row(
-        spacing: 16.w,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(
-            Icons.error_outline_rounded,
-            size: 24.sp,
-            color: AppColors.dynamic,
-          ),
-          Expanded(
-            child: Column(
-              spacing: 2.h,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                RichText(
-                  text: TextSpan(
-                    text:
-                        "Funds will be deposited to your GTB Pounds account within 2-3 business days after admin approval.",
-                    style: TextStyles.cardRegular10(context),
-                  ),
-                ),
-              ],
-            ),
           ),
         ],
       ),

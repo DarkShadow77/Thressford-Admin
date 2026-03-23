@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:thressford_admin/features/user_management/data/models/users_management_status_enum.dart';
+import '../admin_enum.dart';
 
 UpdateAdminStatusRequestModel updateAdminStatusRequestModelFromJson(
   String str,
@@ -19,14 +19,14 @@ class UpdateAdminStatusRequestModel {
 
   String token;
   String email;
-  UsersStatus status;
+  AdminStatus status;
 
   factory UpdateAdminStatusRequestModel.fromJson(Map<String, dynamic> json) =>
       UpdateAdminStatusRequestModel(
         // Handle potential null values
         token: json["token"] ?? "",
         email: json["email"] ?? "",
-        status: UsersStatusExtension.fromString(json['status'] ?? ""),
+        status: AdminStatusExtension.fromString(json['status'] ?? ""),
       );
 
   Map<String, dynamic> toMap() {

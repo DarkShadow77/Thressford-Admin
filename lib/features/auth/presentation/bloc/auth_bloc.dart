@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../dashboard/presentation/bloc/dashboard_bloc.dart';
+import '../../data/models/request/change_password_request_model.dart';
 import '../../data/models/request/login_request_model.dart';
 import '../../domain/repositories/auth_repository.dart';
 
@@ -14,6 +15,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   AuthBloc({required this.repo, this.profileBloc}) : super(AuthInitialState()) {
     on<LoginEvent>(_onLogin);
+    on<ChangePasswordEvent>(_onChangePassword);
   }
 
   Future<void> _onLogin(LoginEvent event, Emitter<AuthState> emit) async {
@@ -34,6 +36,30 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           ),
         );
       },
+    );
+  }
+
+  Future<void> _onChangePassword(
+    ChangePasswordEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoadingState(type: AuthType.changePassword));
+
+    final response = await repo.changePassword(request: event.request);
+
+    response.fold(
+      (failure) => emit(
+        AuthFailureState(
+          type: AuthType.changePassword,
+          message: failure.toString(),
+        ),
+      ),
+      (response) => emit(
+        AuthSuccessState(
+          type: AuthType.changePassword,
+          message: response.responseMessage!,
+        ),
+      ),
     );
   }
 }

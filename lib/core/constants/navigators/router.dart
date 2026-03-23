@@ -10,7 +10,9 @@ import '../../../features/onboarding/presentation/pages/splash_screen_page.dart'
 import '../../../features/referral_management/presentation/pages/referral_management_details_page.dart';
 import '../../../features/referral_management/presentation/pages/referral_management_page.dart';
 import '../../../features/settings/presentation/pages/change_password_page.dart';
+import '../../../features/settings/presentation/pages/create_admin_successful_page.dart';
 import '../../../features/settings/presentation/pages/settings_page.dart';
+import '../../../features/submissions/presentation/pages/submission_details_page.dart';
 import '../../../features/submissions/presentation/pages/submissions_page.dart';
 import '../../../features/user_management/presentation/pages/user_management_details_page.dart';
 import '../../../features/user_management/presentation/pages/user_management_page.dart';
@@ -78,6 +80,12 @@ Route<dynamic> generateRoute(RouteSettings settings) {
         routeName: settings.name!,
         viewToShow: const SubmissionPage(),
       );
+    case RouteName.submissionDetailsPage:
+      final args = settings.arguments! as SubmissionDetailsPageParam;
+      return _getPageRoute(
+        routeName: settings.name!,
+        viewToShow: SubmissionDetailsPage(param: args),
+      );
 
     //SETTINGS PAGE
     case RouteName.settingsPage:
@@ -99,6 +107,12 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return _getPageRoute(
         routeName: settings.name!,
         viewToShow: CreateAdminPage(),
+      );
+    case RouteName.createAdminSuccessPage:
+      final args = settings.arguments! as CreateAdminSuccessPageParam;
+      return _getPageRoute(
+        routeName: settings.name!,
+        viewToShow: CreateAdminSuccessPage(param: args),
       );
 
     //HOME PAGE

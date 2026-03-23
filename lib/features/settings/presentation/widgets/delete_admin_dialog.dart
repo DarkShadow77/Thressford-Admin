@@ -5,64 +5,73 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:thressford_admin/features/user_management/data/models/users_management_status_enum.dart';
-import 'package:thressford_admin/features/user_management/presentation/widgets/user_status_success_dialog.dart';
+import 'package:thressford_admin/features/settings/data/models/response/admin_response_model.dart';
 
 import '../../../../../app/styles/text_styles.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../app/view/widgets/buttons/icon_text_button.dart';
 import '../../../../core/constants/enums/app_enum.dart';
 import '../../../../core/utils/helpers.dart';
+import '../../../../core/utils/local_storage.dart';
 import '../../../../core/utils/ui_tool_mix.dart';
-import '../../data/models/response/users_response_model.dart';
-import '../bloc/users_bloc.dart';
+import '../../data/models/request/delete_admin_request_model.dart';
+import '../bloc/admin_bloc.dart';
+import 'admin_success_dialog.dart';
 
-Future<dynamic> deactivateUserDialog({required UsersModel user}) async {
+Future<dynamic> deleteAdminDialog({
+  required AdminModel admin,
+  bool restore = false,
+}) async {
   return Get.dialog(
-    name: "deactivate_user_dialog",
+    name: "delete_admin_dialog",
     barrierColor: Colors.transparent,
     barrierDismissible: true,
-    DeactivateUserDialog(user: user),
+    DeleteAdminDialog(admin: admin, restore: restore),
   );
 }
 
-class DeactivateUserDialog extends StatefulWidget {
-  const DeactivateUserDialog({super.key, required this.user});
+class DeleteAdminDialog extends StatefulWidget {
+  const DeleteAdminDialog({
+    super.key,
+    required this.admin,
+    required this.restore,
+  });
 
-  final UsersModel user;
+  final AdminModel admin;
+  final bool restore;
 
   @override
-  State<DeactivateUserDialog> createState() => _DeactivateUserDialogState();
+  State<DeleteAdminDialog> createState() => _DeleteAdminDialogState();
 }
 
-class _DeactivateUserDialogState extends State<DeactivateUserDialog>
+class _DeleteAdminDialogState extends State<DeleteAdminDialog>
     with UIToolMixin {
   bool loading = false;
 
-  void _loadingUsersState(BuildContext context, UsersLoadingState state) {
-    if (state.type == UsersType.deactivateUser) {
+  void _loadingAdminState(BuildContext context, AdminLoadingState state) {
+    if (state.type == AdminType.deleteAdmin) {
       setState(() => loading = true);
     }
   }
 
-  void _successUsersState(BuildContext context, UsersSuccessState state) {
-    if (state.type == UsersType.deactivateUser) {
-      context.read<UsersBloc>().add(GetAllUsersEvent());
+  void _successAdminState(BuildContext context, AdminSuccessState state) {
+    if (state.type == AdminType.deleteAdmin) {
+      context.read<AdminBloc>().add(GetAllAdminEvent());
       Future.delayed((Duration(seconds: 1)), () {
         setState(() => loading = false);
         Navigator.pop(context);
-        userStatusSuccessfulDialog(
-          user: widget.user,
-          title: "User Deactivated",
-          subTitle:
-              "${widget.user}’s account has been deactivated successfully.",
+        adminSuccessDialog(
+          title: widget.restore ? "Admin Restored" : "Admin Deleted",
+          subTitle: widget.restore
+              ? "${widget.admin.fullName}’s profile has been restored successfully"
+              : "${widget.admin.fullName}’s profile has been deleted successfully",
         );
       });
     }
   }
 
-  void _failedUsersState(BuildContext context, UsersFailureState state) {
-    if (state.type == UsersType.deactivateUser) {
+  void _failedAdminState(BuildContext context, AdminFailureState state) {
+    if (state.type == AdminType.deleteAdmin) {
       setState(() => loading = false);
       showMessage(context, state.message, status: true);
     }
@@ -70,14 +79,14 @@ class _DeactivateUserDialogState extends State<DeactivateUserDialog>
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<UsersBloc, UsersState>(
+    return BlocListener<AdminBloc, AdminState>(
       listener: (context, state) {
-        if (state is UsersLoadingState) {
-          _loadingUsersState(context, state);
-        } else if (state is UsersSuccessState) {
-          _successUsersState(context, state);
-        } else if (state is UsersFailureState) {
-          _failedUsersState(context, state);
+        if (state is AdminLoadingState) {
+          _loadingAdminState(context, state);
+        } else if (state is AdminSuccessState) {
+          _successAdminState(context, state);
+        } else if (state is AdminFailureState) {
+          _failedAdminState(context, state);
         }
       },
       child: Scaffold(
@@ -137,14 +146,20 @@ class _DeactivateUserDialogState extends State<DeactivateUserDialog>
                             width: 60.r,
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
-                              color: AppColors.error5,
+                              color: widget.restore
+                                  ? AppColors.green5
+                                  : AppColors.error5,
                               shape: BoxShape.circle,
                             ),
                             child: IconButton(
                               onPressed: () => Navigator.pop(context),
                               icon: HugeIcon(
-                                icon: HugeIcons.strokeRoundedCancel01,
-                                color: AppColors.error,
+                                icon: widget.restore
+                                    ? HugeIcons.strokeRoundedRecycle03
+                                    : HugeIcons.strokeRoundedCancel01,
+                                color: widget.restore
+                                    ? AppColors.green
+                                    : AppColors.error,
                                 size: 18.sp,
                               ),
                             ),
@@ -153,7 +168,9 @@ class _DeactivateUserDialogState extends State<DeactivateUserDialog>
                           RichText(
                             textAlign: TextAlign.center,
                             text: TextSpan(
-                              text: "Deactivate User?",
+                              text: widget.restore
+                                  ? "Restore Admin?"
+                                  : "Delete Admin?",
                               style: TextStyles.titleSemiBold20(context),
                             ),
                           ),
@@ -161,8 +178,9 @@ class _DeactivateUserDialogState extends State<DeactivateUserDialog>
                           RichText(
                             textAlign: TextAlign.center,
                             text: TextSpan(
-                              text:
-                                  "This will permanently deactivate ${widget.user.fullName}'s account. This action cannot be undone.",
+                              text: widget.restore
+                                  ? "Are you sure you want to restore ${widget.admin.fullName}'s profile?"
+                                  : "Are you sure you want to delete this admin?",
                               style: TextStyles.normalRegular14(
                                 context,
                                 opacity: .5,
@@ -188,15 +206,21 @@ class _DeactivateUserDialogState extends State<DeactivateUserDialog>
                               Expanded(
                                 child: IconTextButton(
                                   height: 53,
-                                  onPressed: () {
-                                    context.read<UsersBloc>().add(
-                                      DeactivateUserEvent(
-                                        email: widget.user.email,
-                                        status: UsersStatus.inactive,
+                                  onPressed: () async {
+                                    context.read<AdminBloc>().add(
+                                      DeleteAdminEvent(
+                                        request: DeleteAdminRequestModel(
+                                          token:
+                                              await LocalStorageHelper()
+                                                  .getAccessToken() ??
+                                              "",
+                                          email: widget.admin.email,
+                                          restore: widget.restore,
+                                        ),
                                       ),
                                     );
                                   },
-                                  text: "Deactivate",
+                                  text: widget.restore ? "Restore" : "Delete",
                                   buttonState: loading
                                       ? AppButtonState.loading
                                       : AppButtonState.idle,

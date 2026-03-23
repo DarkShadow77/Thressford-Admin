@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:thressford_admin/app/view/widgets/buttons/theme_toggle.dart';
 import 'package:thressford_admin/core/constants/navigators/route_name.dart';
+import 'package:thressford_admin/features/settings/presentation/bloc/admin_bloc.dart';
 
 import '../../../../../app/styles/text_styles.dart';
 import '../../../../../core/constants/app_colors.dart';
@@ -12,6 +13,10 @@ import '../../../../app/view/widgets/thessford_icon.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/strings.dart';
 import '../../../../core/utils/helpers.dart';
+import '../../../referral_management/presentation/bloc/referral_bloc.dart';
+import '../../../settings/data/models/admin_enum.dart';
+import '../../../settings/presentation/widgets/warning_dialog.dart';
+import '../../../user_management/presentation/bloc/users_bloc.dart';
 import '../../data/models/response/overview_response_model.dart';
 import '../bloc/dashboard_bloc.dart';
 
@@ -24,6 +29,7 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   OverviewModel overview = OverviewModel.empty();
+  AdminRole currentRole = AdminRole.admin;
 
   @override
   void initState() {
@@ -31,6 +37,11 @@ class _DashboardPageState extends State<DashboardPage> {
     final profileBloc = context.read<DashboardBloc>();
     overview = profileBloc.state.overview;
     profileBloc.add(GetOverviewEvent());
+    context.read<UsersBloc>().add(GetAllUsersEvent());
+    context.read<ReferralBloc>().add(GetAllReferralEvent());
+    context.read<AdminBloc>().add(GetAllAdminEvent());
+    final userProfile = profileBloc.state.profile;
+    currentRole = userProfile.role;
   }
 
   List<Map<String, String>> quickActions = [
@@ -154,13 +165,15 @@ class _DashboardPageState extends State<DashboardPage> {
                         crossAxisAlignment: WrapCrossAlignment.start,
                         alignment: WrapAlignment.center,
                         children: quickActions.map((e) {
+                          final route = e["route"] as String;
+                          final hasAccess = currentRole.canAccess(route);
                           return SizedBox(
                             width: (AppSize.width - 40.w - 24.w) / 3,
-
                             child: QuickAction(
                               icon: e["icon"] as String,
                               text: e["title"] as String,
-                              route: e["route"] as String,
+                              route: route,
+                              hasAccess: hasAccess,
                             ),
                           );
                         }).toList(),
@@ -183,64 +196,78 @@ class QuickAction extends StatelessWidget {
     required this.text,
     required this.icon,
     required this.route,
+    this.hasAccess = true,
   });
 
   final String text;
   final String icon;
   final String route;
+  final bool hasAccess;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => Navigator.pushNamed(context, route),
+      onTap: () {
+        if (!hasAccess) {
+          warningDialog(
+            text: "You don't have permission to access this section.",
+          );
+          return;
+        }
+        if (route.isEmpty) return;
+        Navigator.pushNamed(context, route);
+      },
       borderRadius: BorderRadius.circular(14.r),
-      child: Ink(
-        height: 110.h,
-        padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 14.w),
-        decoration: BoxDecoration(
-          color: surfaceColor(),
-          borderRadius: BorderRadius.circular(14.r),
-          boxShadow: [
-            BoxShadow(
-              offset: Offset(0, 1),
-              color: AppColors.dynamic10,
-              blurRadius: 5.r,
-              spreadRadius: 2.r,
-            ),
-          ],
-        ),
-        child: Column(
-          spacing: 6.h,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Container(
-              height: 40.r,
-              width: 40.r,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.dynamic05,
+      child: Opacity(
+        opacity: hasAccess ? 1.0 : 0.4,
+        child: Ink(
+          height: 110.h,
+          padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 14.w),
+          decoration: BoxDecoration(
+            color: surfaceColor(),
+            borderRadius: BorderRadius.circular(14.r),
+            boxShadow: [
+              BoxShadow(
+                offset: Offset(0, 1),
+                color: AppColors.dynamic10,
+                blurRadius: 5.r,
+                spreadRadius: 2.r,
               ),
-              child: Center(
-                child: SvgPicture.asset(
-                  icon,
-                  width: 20.w,
-                  height: 20.h,
-                  colorFilter: ColorFilter.mode(
-                    AppColors.dynamic60,
-                    BlendMode.srcIn,
+            ],
+          ),
+          child: Column(
+            spacing: 6.h,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                height: 40.r,
+                width: 40.r,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.dynamic05,
+                ),
+                child: Center(
+                  child: SvgPicture.asset(
+                    icon,
+                    width: 20.w,
+                    height: 20.h,
+                    colorFilter: ColorFilter.mode(
+                      AppColors.dynamic60,
+                      BlendMode.srcIn,
+                    ),
                   ),
                 ),
               ),
-            ),
-            RichText(
-              textAlign: TextAlign.center,
-              text: TextSpan(
-                text: text,
-                style: TextStyles.smallRegular12(context),
+              RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                  text: text,
+                  style: TextStyles.smallRegular12(context),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

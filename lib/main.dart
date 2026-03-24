@@ -22,6 +22,7 @@ import 'features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'features/referral_management/presentation/bloc/referral_bloc.dart';
 import 'features/settings/presentation/bloc/admin_bloc.dart';
 import 'features/user_management/presentation/bloc/users_bloc.dart';
+import 'features/withdrawal_request/presentation/bloc/transaction_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -101,6 +102,7 @@ class _MyAppState extends State<MyApp> {
           BlocProvider(create: (_) => sl<AdminBloc>()),
           BlocProvider(create: (_) => sl<UsersBloc>()),
           BlocProvider(create: (_) => sl<ReferralBloc>()),
+          BlocProvider(create: (_) => sl<TransactionBloc>()),
         ],
         child: BlocBuilder<ThemeBloc, ThemeMode>(
           builder: (context, themeMode) {

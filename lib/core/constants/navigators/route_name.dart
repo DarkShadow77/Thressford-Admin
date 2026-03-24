@@ -29,5 +29,8 @@ class RouteName {
   static const String createAdminPage = 'create_admin_page';
   static const String createAdminSuccessPage = 'create_admin_success_page';
 
+  //Withdrawal Request Page
+  static const String withdrawalRequestPage = 'withdrawal_request_page';
+
   static const String successfulPage = 'successful_page';
 }

@@ -21,6 +21,10 @@ import '../../features/settings/presentation/bloc/admin_bloc.dart';
 import '../../features/user_management/data/data_sources/user_management_remote_data_source.dart';
 import '../../features/user_management/data/repositories/user_management_repository_impli.dart';
 import '../../features/user_management/domain/repositories/user_management_repository.dart';
+import '../../features/withdrawal_request/data/data_sources/transaction_remote_data_source.dart';
+import '../../features/withdrawal_request/data/repositories/transaction_repository_impli.dart';
+import '../../features/withdrawal_request/domain/repositories/transaction_repository.dart';
+import '../../features/withdrawal_request/presentation/bloc/transaction_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -38,6 +42,9 @@ Future<void> initDI() async {
   );
   sl.registerLazySingleton<ReferralRemoteDataSource>(
     () => ReferralRemoteDataSource(),
+  );
+  sl.registerLazySingleton<TransactionRemoteDataSource>(
+    () => TransactionRemoteDataSource(),
   );
 
   // Repositories
@@ -63,6 +70,11 @@ Future<void> initDI() async {
       referralRemoteDataSource: sl<ReferralRemoteDataSource>(),
     ),
   );
+  sl.registerLazySingleton<TransactionRepository>(
+    () => TransactionRepositoryImpl(
+      transactionRemoteDataSource: sl<TransactionRemoteDataSource>(),
+    ),
+  );
 
   // Blocs (Factories - because Blocs are short-lived)
   sl.registerSingleton<ThemeBloc>(ThemeBloc());
@@ -76,5 +88,8 @@ Future<void> initDI() async {
   );
   sl.registerSingleton<ReferralBloc>(
     ReferralBloc(repo: sl<ReferralRepository>()),
+  );
+  sl.registerSingleton<TransactionBloc>(
+    TransactionBloc(repo: sl<TransactionRepository>()),
   );
 }

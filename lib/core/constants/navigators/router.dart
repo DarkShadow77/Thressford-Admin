@@ -17,6 +17,7 @@ import '../../../features/submissions/presentation/pages/submissions_page.dart';
 import '../../../features/user_management/presentation/pages/user_management_details_page.dart';
 import '../../../features/user_management/presentation/pages/user_management_page.dart';
 import '../../../features/user_management/presentation/pages/user_referrals_page.dart';
+import '../../../features/withdrawal_request/presentation/pages/withdrawal_request_page.dart';
 import 'route_name.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
@@ -113,6 +114,13 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return _getPageRoute(
         routeName: settings.name!,
         viewToShow: CreateAdminSuccessPage(param: args),
+      );
+
+    //WITHDRAWAL REQUEST PAGE
+    case RouteName.withdrawalRequestPage:
+      return _getPageRoute(
+        routeName: settings.name!,
+        viewToShow: const WithdrawalRequestPage(),
       );
 
     //HOME PAGE

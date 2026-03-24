@@ -25,7 +25,7 @@ class ReferralUrl {
       "public/admin/update-enroll-status.php";
 }
 
-class WalletUrl {
+class TransactionUrl {
   static const String getAllTransaction = "public/admin/all_transactions.php";
   static const String updateTransactionStatus =
       "public/admin/update-transaction.php";

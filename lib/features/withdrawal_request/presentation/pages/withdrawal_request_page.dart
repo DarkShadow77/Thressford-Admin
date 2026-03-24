@@ -4,34 +4,32 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:thressford_admin/core/constants/app_assets.dart';
 import 'package:thressford_admin/core/utils/helpers.dart';
-import 'package:thressford_admin/features/referral_management/data/models/referral_status_enum.dart';
-import 'package:thressford_admin/features/referral_management/data/models/response/referral_response_model.dart';
+import 'package:thressford_admin/features/withdrawal_request/data/models/response/transaction_response_model.dart';
 
 import '../../../../app/styles/text_styles.dart';
 import '../../../../core/constants/app_colors.dart';
-import '../../../referral_management/presentation/bloc/referral_bloc.dart';
-import '../widgets/submission_tile.dart';
+import '../../data/models/transaction_enums.dart';
+import '../bloc/transaction_bloc.dart';
+import '../widgets/withdrawal_request_tile.dart';
 
-class SubmissionPage extends StatefulWidget {
-  const SubmissionPage({super.key});
+class WithdrawalRequestPage extends StatefulWidget {
+  const WithdrawalRequestPage({super.key});
 
   @override
-  State<SubmissionPage> createState() => _SubmissionPageState();
+  State<WithdrawalRequestPage> createState() => _WithdrawalRequestPageState();
 }
 
-class _SubmissionPageState extends State<SubmissionPage>
+class _WithdrawalRequestPageState extends State<WithdrawalRequestPage>
     with SingleTickerProviderStateMixin {
   late TabController tabController;
 
-  String status = "pending";
-
-  List<ReferralModel> submissions = [];
+  List<TransactionModel> transactions = [];
 
   @override
   void initState() {
     super.initState();
     tabController = TabController(length: 3, vsync: this);
-    context.read<ReferralBloc>().add(GetAllReferralEvent());
+    context.read<TransactionBloc>().add(GetAllTransactionEvent());
   }
 
   @override
@@ -42,10 +40,15 @@ class _SubmissionPageState extends State<SubmissionPage>
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ReferralBloc, ReferralState>(
+    return BlocBuilder<TransactionBloc, TransactionState>(
       builder: (context, state) {
-        submissions = state.referral;
-
+        transactions = state.transactions
+            .where(
+              (element) =>
+                  element.description.toLowerCase() == "withdrawal request" &&
+                  element.type == PaymentType.withdrawal,
+            )
+            .toList();
         return Scaffold(
           appBar: AppBar(
             titleSpacing: 20.w,
@@ -97,14 +100,14 @@ class _SubmissionPageState extends State<SubmissionPage>
                               children: [
                                 RichText(
                                   text: TextSpan(
-                                    text: "Submission Approval",
+                                    text: "Withdrawal Request",
                                     style: TextStyles.bodySemiBold16(context),
                                   ),
                                 ),
                                 RichText(
                                   text: TextSpan(
                                     text:
-                                        "${formatAmount(submissions.length)} submissions",
+                                        "${formatAmount(transactions.length)} requests",
                                     style: TextStyles.bodyRegular16(
                                       context,
                                       opacity: .75,
@@ -123,7 +126,7 @@ class _SubmissionPageState extends State<SubmissionPage>
                             ),
                             child: Center(
                               child: SvgPicture.asset(
-                                AssetsSvgIcons.checkCircle,
+                                AssetsSvgIcons.pound,
                                 width: 20.sp,
                                 height: 20.sp,
                                 colorFilter: ColorFilter.mode(
@@ -167,7 +170,7 @@ class _SubmissionPageState extends State<SubmissionPage>
                           controller: tabController,
                           tabs: [
                             Tab(text: 'Pending'),
-                            Tab(text: 'Approved '),
+                            Tab(text: 'Transferred '),
                             Tab(text: 'Rejected'),
                           ],
                         ),
@@ -180,16 +183,16 @@ class _SubmissionPageState extends State<SubmissionPage>
                     controller: tabController,
                     children: [
                       TabViewWidget(
-                        status: AppReferralStatus.pending,
-                        submissions: submissions,
+                        status: PaymentStatus.pending,
+                        transaction: transactions,
                       ),
                       TabViewWidget(
-                        status: AppReferralStatus.approved,
-                        submissions: submissions,
+                        status: PaymentStatus.approved,
+                        transaction: transactions,
                       ),
                       TabViewWidget(
-                        status: AppReferralStatus.rejected,
-                        submissions: submissions,
+                        status: PaymentStatus.rejected,
+                        transaction: transactions,
                       ),
                     ],
                   ),
@@ -207,25 +210,25 @@ class TabViewWidget extends StatelessWidget {
   const TabViewWidget({
     super.key,
     required this.status,
-    required this.submissions,
+    required this.transaction,
   });
 
-  final AppReferralStatus status;
-  final List<ReferralModel> submissions;
+  final PaymentStatus status;
+  final List<TransactionModel> transaction;
 
-  List<ReferralModel> get filteredSubmission =>
-      submissions.where((element) => element.appStatus == status).toList();
+  List<TransactionModel> get filteredTransaction =>
+      transaction.where((element) => element.status == status).toList();
 
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
-      itemCount: filteredSubmission.length,
+      itemCount: filteredTransaction.length,
       physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
       padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 20.w),
       itemBuilder: (context, index) {
-        final submission = filteredSubmission[index];
+        final transaction = filteredTransaction[index];
 
-        return SubmissionTile(submission: submission);
+        return WithdrawalRequestTile(transaction: transaction);
       },
       separatorBuilder: (_, _) => SizedBox(height: 16.h),
     );

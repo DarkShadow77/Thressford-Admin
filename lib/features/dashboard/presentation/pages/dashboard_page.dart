@@ -17,6 +17,7 @@ import '../../../referral_management/presentation/bloc/referral_bloc.dart';
 import '../../../settings/data/models/admin_enum.dart';
 import '../../../settings/presentation/widgets/warning_dialog.dart';
 import '../../../user_management/presentation/bloc/users_bloc.dart';
+import '../../../withdrawal_request/presentation/bloc/transaction_bloc.dart';
 import '../../data/models/response/overview_response_model.dart';
 import '../bloc/dashboard_bloc.dart';
 
@@ -40,6 +41,7 @@ class _DashboardPageState extends State<DashboardPage> {
     context.read<UsersBloc>().add(GetAllUsersEvent());
     context.read<ReferralBloc>().add(GetAllReferralEvent());
     context.read<AdminBloc>().add(GetAllAdminEvent());
+    context.read<TransactionBloc>().add(GetAllTransactionEvent());
     final userProfile = profileBloc.state.profile;
     currentRole = userProfile.role;
   }
@@ -71,7 +73,11 @@ class _DashboardPageState extends State<DashboardPage> {
       "icon": AssetsSvgIcons.settings,
       "route": RouteName.settingsPage,
     },
-    {"title": "Withdrawal Request", "icon": AssetsSvgIcons.pound, "route": ""},
+    {
+      "title": "Withdrawal Request",
+      "icon": AssetsSvgIcons.pound,
+      "route": RouteName.withdrawalRequestPage,
+    },
   ];
 
   @override

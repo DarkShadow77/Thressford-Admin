@@ -12,7 +12,7 @@ import '../../data/models/response/referral_response_model.dart';
 
 Future updateEnrollStatusModal({
   required ReferralModel referral,
-  required Function(EnrollReferralStatus, String?) onPressed,
+  required Future<bool> Function(EnrollReferralStatus, String?) onPressed,
 }) {
   return Get.bottomSheet(
     isScrollControlled: true,
@@ -34,7 +34,7 @@ class UpdateEnrollStatusModal extends StatefulWidget {
     required this.referral,
   });
 
-  final Function(EnrollReferralStatus, String?) onPressed;
+  final Future<bool> Function(EnrollReferralStatus, String?) onPressed;
   final ReferralModel referral;
 
   @override
@@ -70,23 +70,28 @@ class _UpdateEnrollStatusModalState extends State<UpdateEnrollStatusModal> {
     }
   }
 
-  void _onSubmit(String data) {
+  void _onSubmit(String data) async {
     if (data == EnrollReferralStatus.cancelled.statusString) {
       addNotesDialog(
         note: widget.referral.adminEnrollNote,
-        onTap: (value) {
-          widget.onPressed(
+        onTap: (value) async {
+          final shouldClose = await widget.onPressed(
             EnrollReferralStatusExtension.fromString(data),
             value,
           );
-
-          Navigator.of(context, rootNavigator: true).pop();
+          if (shouldClose) {
+            Navigator.of(context, rootNavigator: true).pop();
+          }
         },
       );
     } else {
-      widget.onPressed(EnrollReferralStatusExtension.fromString(data), null);
-
-      Navigator.of(context, rootNavigator: true).pop();
+      final shouldClose = await widget.onPressed(
+        EnrollReferralStatusExtension.fromString(data),
+        null,
+      );
+      if (shouldClose) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
     }
   }
 

@@ -58,7 +58,7 @@ class ReferralTile extends StatelessWidget {
                 text:
                     "Expected commission must be set before marking this referral as paid. Please update the expected commission first.",
               );
-              return;
+              return false;
             }
             context.read<ReferralBloc>().add(
               UpdateCommissionStatusEvent(
@@ -84,6 +84,8 @@ class ReferralTile extends StatelessWidget {
               ),
             ),
           );
+
+          return true;
         },
       );
     } else if (value == "add note") {

@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:thressford_admin/features/referral_management/data/models/referral_status_enum.dart';
+
 UpdateCommissionStatusRequestModel updateCommissionStatusRequestModelFromJson(
   String str,
 ) => UpdateCommissionStatusRequestModel.fromJson(json.decode(str));
@@ -17,7 +19,7 @@ class UpdateCommissionStatusRequestModel {
 
   String token;
   String email;
-  String status;
+  CommissionStatus status;
 
   factory UpdateCommissionStatusRequestModel.fromJson(
     Map<String, dynamic> json,
@@ -25,14 +27,14 @@ class UpdateCommissionStatusRequestModel {
     // Handle potential null values
     token: json["token"] ?? "",
     email: json["email"] ?? "",
-    status: json["status"] ?? "",
+    status: CommissionStatusExtension.fromString(json['status'] ?? ""),
   );
 
   Map<String, dynamic> toMap() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data["token"] = token;
     data["email"] = email;
-    data["status"] = status;
+    data["status"] = status.statusString;
     return data;
   }
 
@@ -40,7 +42,7 @@ class UpdateCommissionStatusRequestModel {
     final Map<String, dynamic> data = <String, dynamic>{};
     data["token"] = token;
     data["email"] = email;
-    data["status"] = status;
+    data["status"] = status.statusString;
 
     return data;
   }

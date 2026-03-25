@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:thressford_admin/core/utils/helpers.dart';
 import 'package:thressford_admin/features/referral_management/data/models/referral_status_enum.dart';
+import 'package:thressford_admin/features/settings/presentation/widgets/warning_dialog.dart';
 
 import '../../../../../app/styles/text_styles.dart';
 import '../../../../../core/constants/app_colors.dart';
@@ -259,9 +260,24 @@ class _ReferralManagementDetailsPageState
                                   ),
                                 ),
                                 GestureDetector(
-                                  onTap: () => expectedCommissionDialog(
-                                    referral: referral,
-                                  ),
+                                  onTap: () {
+                                    if (isPending) {
+                                      warningDialog(
+                                        text:
+                                            "The expected commission cannot be updated while this referral is still pending review. Please wait until the application has been approved.",
+                                      );
+                                      return;
+                                    } else if (isAppRejected) {
+                                      warningDialog(
+                                        text:
+                                            "The expected commission cannot be updated for a rejected application.",
+                                      );
+                                      return;
+                                    }
+                                    expectedCommissionDialog(
+                                      referral: referral,
+                                    );
+                                  },
                                   child: Container(
                                     width: 24.w,
                                     height: 24.h,

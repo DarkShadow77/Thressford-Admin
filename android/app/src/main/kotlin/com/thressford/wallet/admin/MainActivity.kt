@@ -1,4 +1,4 @@
-package com.example.thressford_admin
+package com.thressford.wallet.admin
 
 import io.flutter.embedding.android.FlutterActivity
 

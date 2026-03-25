@@ -67,7 +67,11 @@ class _DashboardPageState extends State<DashboardPage> {
       "icon": AssetsSvgIcons.checkCircle,
       "route": RouteName.paymentPage,
     },
-    {"title": "Reports", "icon": AssetsSvgIcons.rise, "route": ""},
+    {
+      "title": "Reports",
+      "icon": AssetsSvgIcons.rise,
+      "route": RouteName.reportPage,
+    },
     {
       "title": "Settings",
       "icon": AssetsSvgIcons.settings,

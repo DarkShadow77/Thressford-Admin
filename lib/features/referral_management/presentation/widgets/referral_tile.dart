@@ -5,7 +5,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:thressford_admin/core/utils/local_storage.dart';
 import 'package:thressford_admin/features/referral_management/data/models/referral_status_enum.dart';
+import 'package:thressford_admin/features/referral_management/data/models/request/update_commission_status_request_model.dart';
 import 'package:thressford_admin/features/referral_management/data/models/request/update_enroll_status_request_model.dart';
+import 'package:thressford_admin/features/settings/presentation/widgets/warning_dialog.dart';
 
 import '../../../../app/styles/text_styles.dart';
 import '../../../../core/constants/app_assets.dart';
@@ -33,9 +35,42 @@ class ReferralTile extends StatelessWidget {
     } else if (value == "update") {
       final isCurrentCancelled =
           referral.enrollStatus == EnrollReferralStatus.cancelled;
+      if (referral.appStatus == AppReferralStatus.pending) {
+        warningDialog(
+          text:
+              "This referral is still pending review. You cannot update the enrolment status until the application has been approved.",
+        );
+        return;
+      } else if (referral.appStatus == AppReferralStatus.rejected) {
+        warningDialog(
+          text:
+              "This referral application has been rejected. The enrolment status cannot be updated for rejected applications.",
+        );
+        return;
+      }
       updateEnrollStatusModal(
         referral: referral,
         onPressed: (value, comment) async {
+          if (value == EnrollReferralStatus.paid) {
+            if (double.tryParse(referral.expectedCommission) == null ||
+                double.parse(referral.expectedCommission) <= 0) {
+              warningDialog(
+                text:
+                    "Expected commission must be set before marking this referral as paid. Please update the expected commission first.",
+              );
+              return;
+            }
+            context.read<ReferralBloc>().add(
+              UpdateCommissionStatusEvent(
+                request: UpdateCommissionStatusRequestModel(
+                  token: await LocalStorageHelper().getAccessToken() ?? "",
+                  email: referral.email,
+                  status: CommissionStatus.paid,
+                ),
+              ),
+            );
+          }
+
           context.read<ReferralBloc>().add(
             UpdateEnrollStatusEvent(
               request: UpdateEnrollStatusRequestModel(

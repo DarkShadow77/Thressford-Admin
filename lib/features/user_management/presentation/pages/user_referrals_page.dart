@@ -88,7 +88,8 @@ class _UserReferralsPageState extends State<UserReferralsPage>
   }
 
   void _failedReferralState(BuildContext context, ReferralFailureState state) {
-    if (state.type == ReferralType.updateEnrollStatus) {
+    if (state.type == ReferralType.updateEnrollStatus ||
+        state.type == ReferralType.updateCommissionStatus) {
       Future.delayed((Duration(seconds: 1)), () {
         if (Get.isDialogOpen == true) Navigator.pop(context);
         showMessage(context, state.message, status: true);

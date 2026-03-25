@@ -63,6 +63,33 @@ extension EnrollReferralStatusExtension on EnrollReferralStatus {
         return EnrollReferralStatus.referred;
     }
   }
+
+  int get level {
+    switch (this) {
+      case EnrollReferralStatus.cancelled:
+        return 0;
+      case EnrollReferralStatus.referred:
+        return 1;
+      case EnrollReferralStatus.contacted:
+        return 2;
+      case EnrollReferralStatus.applicationStarted:
+        return 3;
+      case EnrollReferralStatus.documentSubmitted:
+        return 4;
+      case EnrollReferralStatus.offerIssued:
+        return 5; // conversion threshold
+      case EnrollReferralStatus.visaProcessing:
+        return 6;
+      case EnrollReferralStatus.visaApproved:
+        return 7;
+      case EnrollReferralStatus.enrolled:
+        return 8;
+      case EnrollReferralStatus.paid:
+        return 9;
+    }
+  }
+
+  bool get isConverted => level >= 5;
 }
 
 enum AppReferralStatus { pending, rejected, approved }

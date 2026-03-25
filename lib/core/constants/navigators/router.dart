@@ -9,6 +9,7 @@ import '../../../features/auth/presentation/pages/login_page.dart';
 import '../../../features/onboarding/presentation/pages/splash_screen_page.dart';
 import '../../../features/referral_management/presentation/pages/referral_management_details_page.dart';
 import '../../../features/referral_management/presentation/pages/referral_management_page.dart';
+import '../../../features/report/presentation/pages/report_page.dart';
 import '../../../features/settings/presentation/pages/change_password_page.dart';
 import '../../../features/settings/presentation/pages/create_admin_successful_page.dart';
 import '../../../features/settings/presentation/pages/settings_page.dart';
@@ -86,6 +87,13 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return _getPageRoute(
         routeName: settings.name!,
         viewToShow: SubmissionDetailsPage(param: args),
+      );
+
+    //REPORT PAGE
+    case RouteName.reportPage:
+      return _getPageRoute(
+        routeName: settings.name!,
+        viewToShow: const ReportPage(),
       );
 
     //SETTINGS PAGE

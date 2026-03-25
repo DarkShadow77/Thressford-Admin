@@ -182,8 +182,7 @@ String _trim(num value) {
 }
 
 String formatDate(String date) {
-  String dateString = '2026-02-15 23:23:27';
-  DateTime dateTime = DateTime.parse(dateString);
+  DateTime dateTime = DateTime.parse(date);
   String formatted = DateFormat('d MMM, yyyy').format(dateTime);
   return formatted;
 }

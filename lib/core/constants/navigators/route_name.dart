@@ -22,6 +22,9 @@ class RouteName {
   //Payment Page
   static const String paymentPage = 'payment_page';
 
+  //Report Page
+  static const String reportPage = 'report_page';
+
   //Settings Page
   static const String settingsPage = 'settings_page';
   static const String changePasswordPage = 'change_password_page';

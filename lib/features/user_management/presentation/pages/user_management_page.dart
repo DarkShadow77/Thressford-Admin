@@ -15,6 +15,8 @@ import '../../../../app/styles/text_styles.dart';
 import '../../../../app/view/widgets/input/search_text_input.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/navigators/route_name.dart';
+import '../../../referral_management/data/models/referral_status_enum.dart';
+import '../../../referral_management/data/models/response/referral_response_model.dart';
 import '../../../referral_management/presentation/bloc/referral_bloc.dart';
 import '../bloc/users_bloc.dart';
 import 'user_management_details_page.dart';
@@ -35,6 +37,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
 
   List<UsersModel> searchData = [];
   List<UsersModel> users = [];
+  List<ReferralModel> referrals = [];
 
   @override
   void initState() {
@@ -77,232 +80,241 @@ class _UserManagementPageState extends State<UserManagementPage> {
           users = state.users;
           search();
         });
-        return Scaffold(
-          appBar: AppBar(
-            titleSpacing: 20.w,
-            automaticallyImplyLeading: false,
-            toolbarHeight: kToolbarHeight + 20.h,
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    width: 40.w,
-                    height: 40.h,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: AppColors.dynamic05,
-                    ),
-                    child: Center(
-                      child: Icon(
-                        Icons.arrow_back_rounded,
-                        size: 24.sp,
-                        color: AppColors.dynamic,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          body: SafeArea(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  SizedBox(height: 10.h),
-                  Row(
-                    spacing: 16.w,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          spacing: 8.h,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            RichText(
-                              text: TextSpan(
-                                text: "User Management",
-                                style: TextStyles.bodySemiBold16(context),
-                              ),
-                            ),
-                            RichText(
-                              text: TextSpan(
-                                text:
-                                    "${searchData.length} total user${searchData.length != 1 ? 's' : ''}",
-                                style: TextStyles.bodyRegular16(
-                                  context,
-                                  opacity: .75,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
+        return BlocBuilder<ReferralBloc, ReferralState>(
+          builder: (context, state) {
+            referrals = state.referral;
+            return Scaffold(
+              appBar: AppBar(
+                titleSpacing: 20.w,
+                automaticallyImplyLeading: false,
+                toolbarHeight: kToolbarHeight + 20.h,
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
                         width: 40.w,
                         height: 40.h,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: AppColors.dynamic,
+                          color: AppColors.dynamic05,
                         ),
                         child: Center(
-                          child: SvgPicture.asset(
-                            AssetsSvgIcons.userGroup,
-                            width: 20.sp,
-                            height: 20.sp,
-                            colorFilter: ColorFilter.mode(
-                              AppColors.inverseDynamic,
-                              BlendMode.srcIn,
-                            ),
+                          child: Icon(
+                            Icons.arrow_back_rounded,
+                            size: 24.sp,
+                            color: AppColors.dynamic,
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                  SizedBox(height: 20.h),
-                  Row(
-                    spacing: 10.w,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    ),
+                  ],
+                ),
+              ),
+              body: SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Expanded(
-                        child: SearchTextInput(
-                          height: 56,
-                          hintText: "Search User",
-                          controller: _inputController,
-                          onChanged: (value) {
-                            setState(() {
-                              searchText = value;
-                            });
-                            search();
-                          },
-                        ),
-                      ),
-                      PopupMenuButton<String>(
-                        color: surfaceColor(),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14.r),
-                        ),
-                        borderRadius: BorderRadius.circular(12.r),
-                        shadowColor: AppColors.dynamic20,
-                        position: PopupMenuPosition.under,
-                        onSelected: (value) {
-                          setState(() => filterType = value);
-                          search();
-                        },
-                        menuPadding: EdgeInsets.symmetric(
-                          vertical: 8.h,
-                          horizontal: 4.w,
-                        ),
-                        padding: EdgeInsets.zero,
-                        constraints: BoxConstraints(maxWidth: 170.w),
-                        itemBuilder: (context) =>
-                            [
-                                  ("", "All Users"),
-                                  (
-                                    UsersStatus.active.statusString,
-                                    UsersStatus
-                                            .active
-                                            .statusString
-                                            .capitalize ??
-                                        "",
-                                  ),
-                                  (
-                                    UsersStatus.inactive.statusString,
-                                    UsersStatus
-                                            .inactive
-                                            .statusString
-                                            .capitalize ??
-                                        "",
-                                  ),
-                                  (
-                                    UsersStatus.suspended.statusString,
-                                    UsersStatus
-                                            .suspended
-                                            .statusString
-                                            .capitalize ??
-                                        "",
-                                  ),
-                                ]
-                                .map(
-                                  (e) => _buildPopupMenuItem(
-                                    context,
-                                    value: e.$1,
-                                    text: e.$2,
-                                    selected: filterType == e.$1,
-                                  ),
-                                )
-                                .toList(),
-                        child: Container(
-                          width: 56.w,
-                          height: 56.h,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: AppColors.dynamic20),
-                            borderRadius: BorderRadius.circular(14.r),
-                            color: filterType.isNotEmpty
-                                ? AppColors.primary50
-                                : null,
-                          ),
-                          child: Center(
-                            child: SvgPicture.asset(
-                              AssetsSvgIcons.filter,
-                              width: 24.w,
-                              height: 24.h,
-                              fit: BoxFit.contain,
-                              colorFilter: ColorFilter.mode(
-                                filterType.isNotEmpty
-                                    ? AppColors.white
-                                    : AppColors.dynamic,
-                                BlendMode.srcIn,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Expanded(
-                    child: searchData.isEmpty
-                        ? Center(
+                      SizedBox(height: 10.h),
+                      Row(
+                        spacing: 16.w,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
                             child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                              spacing: 8.h,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Icon(
-                                  Icons.search_off,
-                                  size: 48.sp,
-                                  color: AppColors.dynamic50,
+                                RichText(
+                                  text: TextSpan(
+                                    text: "User Management",
+                                    style: TextStyles.bodySemiBold16(context),
+                                  ),
                                 ),
-                                SizedBox(height: 16.h),
-                                Text(
-                                  "No Users found",
-                                  style: TextStyles.bodyRegular16(
-                                    context,
-                                    opacity: 0.5,
+                                RichText(
+                                  text: TextSpan(
+                                    text:
+                                        "${searchData.length} total user${searchData.length != 1 ? 's' : ''}",
+                                    style: TextStyles.bodyRegular16(
+                                      context,
+                                      opacity: .75,
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
-                          )
-                        : ListView.separated(
-                            itemCount: searchData.length,
-                            physics: BouncingScrollPhysics(
-                              parent: AlwaysScrollableScrollPhysics(),
-                            ),
-                            padding: EdgeInsets.symmetric(vertical: 32.h),
-                            itemBuilder: (context, index) {
-                              final referral = searchData[index];
-                              return UsersTile(user: referral);
-                            },
-                            separatorBuilder: (_, _) => SizedBox(height: 16.h),
                           ),
+                          Container(
+                            width: 40.w,
+                            height: 40.h,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: AppColors.dynamic,
+                            ),
+                            child: Center(
+                              child: SvgPicture.asset(
+                                AssetsSvgIcons.userGroup,
+                                width: 20.sp,
+                                height: 20.sp,
+                                colorFilter: ColorFilter.mode(
+                                  AppColors.inverseDynamic,
+                                  BlendMode.srcIn,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 20.h),
+                      Row(
+                        spacing: 10.w,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: SearchTextInput(
+                              height: 56,
+                              hintText: "Search User",
+                              controller: _inputController,
+                              onChanged: (value) {
+                                setState(() {
+                                  searchText = value;
+                                });
+                                search();
+                              },
+                            ),
+                          ),
+                          PopupMenuButton<String>(
+                            color: surfaceColor(),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14.r),
+                            ),
+                            borderRadius: BorderRadius.circular(12.r),
+                            shadowColor: AppColors.dynamic20,
+                            position: PopupMenuPosition.under,
+                            onSelected: (value) {
+                              setState(() => filterType = value);
+                              search();
+                            },
+                            menuPadding: EdgeInsets.symmetric(
+                              vertical: 8.h,
+                              horizontal: 4.w,
+                            ),
+                            padding: EdgeInsets.zero,
+                            constraints: BoxConstraints(maxWidth: 170.w),
+                            itemBuilder: (context) =>
+                                [
+                                      ("", "All Users"),
+                                      (
+                                        UsersStatus.active.statusString,
+                                        UsersStatus
+                                                .active
+                                                .statusString
+                                                .capitalize ??
+                                            "",
+                                      ),
+                                      (
+                                        UsersStatus.inactive.statusString,
+                                        UsersStatus
+                                                .inactive
+                                                .statusString
+                                                .capitalize ??
+                                            "",
+                                      ),
+                                      (
+                                        UsersStatus.suspended.statusString,
+                                        UsersStatus
+                                                .suspended
+                                                .statusString
+                                                .capitalize ??
+                                            "",
+                                      ),
+                                    ]
+                                    .map(
+                                      (e) => _buildPopupMenuItem(
+                                        context,
+                                        value: e.$1,
+                                        text: e.$2,
+                                        selected: filterType == e.$1,
+                                      ),
+                                    )
+                                    .toList(),
+                            child: Container(
+                              width: 56.w,
+                              height: 56.h,
+                              decoration: BoxDecoration(
+                                border: Border.all(color: AppColors.dynamic20),
+                                borderRadius: BorderRadius.circular(14.r),
+                                color: filterType.isNotEmpty
+                                    ? AppColors.primary50
+                                    : null,
+                              ),
+                              child: Center(
+                                child: SvgPicture.asset(
+                                  AssetsSvgIcons.filter,
+                                  width: 24.w,
+                                  height: 24.h,
+                                  fit: BoxFit.contain,
+                                  colorFilter: ColorFilter.mode(
+                                    filterType.isNotEmpty
+                                        ? AppColors.white
+                                        : AppColors.dynamic,
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Expanded(
+                        child: searchData.isEmpty
+                            ? Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.search_off,
+                                      size: 48.sp,
+                                      color: AppColors.dynamic50,
+                                    ),
+                                    SizedBox(height: 16.h),
+                                    Text(
+                                      "No Users found",
+                                      style: TextStyles.bodyRegular16(
+                                        context,
+                                        opacity: 0.5,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : ListView.separated(
+                                itemCount: searchData.length,
+                                physics: BouncingScrollPhysics(
+                                  parent: AlwaysScrollableScrollPhysics(),
+                                ),
+                                padding: EdgeInsets.symmetric(vertical: 32.h),
+                                itemBuilder: (context, index) {
+                                  final user = searchData[index];
+                                  return UsersTile(
+                                    user: user,
+                                    referrals: referrals,
+                                  );
+                                },
+                                separatorBuilder: (_, _) =>
+                                    SizedBox(height: 16.h),
+                              ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
+            );
+          },
         );
       },
     );
@@ -310,9 +322,27 @@ class _UserManagementPageState extends State<UserManagementPage> {
 }
 
 class UsersTile extends StatelessWidget {
-  const UsersTile({super.key, required this.user});
+  const UsersTile({super.key, required this.user, required this.referrals});
 
   final UsersModel user;
+  final List<ReferralModel> referrals;
+
+  double _totalPaidForUser(String userId) {
+    return referrals
+        .where((r) {
+          final isPaid =
+              r.commissionStatus == CommissionStatus.paid ||
+              r.enrollStatus == EnrollReferralStatus.paid;
+          return isPaid && r.referer == userId;
+        })
+        .fold(
+          0.0,
+          (sum, r) => sum + (double.tryParse(r.expectedCommission) ?? 0),
+        );
+  }
+
+  int _totalReferralsForUser(String userId) =>
+      referrals.where((r) => r.referer == userId).length;
 
   @override
   Widget build(BuildContext context) {
@@ -425,8 +455,7 @@ class UsersTile extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             text: TextSpan(
-                              text:
-                                  "Joined ${formatDate(user.updatedAt ?? user.createdAt)}",
+                              text: "Joined ${formatDate(user.createdAt)}",
                               style: TextStyles.smallRegular12(
                                 context,
                                 opacity: .65,
@@ -535,14 +564,15 @@ class UsersTile extends StatelessWidget {
                     child: _buildContainer(
                       context,
                       right: false,
-                      text: formatAmount(user.totalReferrals),
+                      text: formatAmount(_totalReferralsForUser(user.id)),
                       subtitle: "Referrals",
                     ),
                   ),
                   Expanded(
                     child: _buildContainer(
                       context,
-                      text: "£${formatAmount(user.totalEarnings)}",
+                      text:
+                          "£${formatAmount(_totalPaidForUser(user.id).toPrecision(2))}",
                       subtitle: "Earnings",
                     ),
                   ),

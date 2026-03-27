@@ -188,7 +188,7 @@ class _SubmissionPageState extends State<SubmissionPage>
                         submissions: submissions,
                       ),
                       TabViewWidget(
-                        status: AppReferralStatus.rejected,
+                        status: AppReferralStatus.declined,
                         submissions: submissions,
                       ),
                     ],

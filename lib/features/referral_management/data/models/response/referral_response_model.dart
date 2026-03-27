@@ -126,7 +126,7 @@ class ReferralModel {
     return switch (appStatus) {
       AppReferralStatus.pending => AppColors.orange,
       AppReferralStatus.approved => AppColors.green,
-      AppReferralStatus.rejected => AppColors.error,
+      AppReferralStatus.declined => AppColors.error,
     };
   }
 

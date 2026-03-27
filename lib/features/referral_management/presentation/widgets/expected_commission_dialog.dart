@@ -8,7 +8,9 @@ import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
 import 'package:thressford_admin/core/utils/local_storage.dart';
+import 'package:thressford_admin/features/referral_management/data/models/referral_status_enum.dart';
 import 'package:thressford_admin/features/referral_management/data/models/request/update_commission_request_model.dart';
+import 'package:thressford_admin/features/settings/presentation/widgets/warning_dialog.dart';
 
 import '../../../../../app/styles/text_styles.dart';
 import '../../../../../core/constants/app_colors.dart';
@@ -54,6 +56,10 @@ class _ExpectedCommissionDialogState extends State<ExpectedCommissionDialog>
   @override
   void initState() {
     super.initState();
+    _commissionController.text = widget.referral.expectedCommission.replaceAll(
+      ",",
+      "",
+    );
   }
 
   @override
@@ -78,16 +84,20 @@ class _ExpectedCommissionDialogState extends State<ExpectedCommissionDialog>
     _validateForm();
     _isFormValid = _formValidation();
     if (_isFormValid) {
-      context.read<ReferralBloc>().add(
-        UpdateCommissionEvent(
-          request: UpdateCommissionRequestModel(
-            token: await LocalStorageHelper().getAccessToken() ?? "",
-            email: widget.referral.email,
-            comm: int.parse(_rawValue), // always use raw value for API
-            commDate: DateTime.now().toLocal().toIso8601String(),
+      if (widget.referral.commissionStatus == CommissionStatus.paid) {
+        warningDialog(text: "Commission already paid");
+      } else {
+        context.read<ReferralBloc>().add(
+          UpdateCommissionEvent(
+            request: UpdateCommissionRequestModel(
+              token: await LocalStorageHelper().getAccessToken() ?? "",
+              email: widget.referral.email,
+              comm: int.parse(_rawValue), // always use raw value for API
+              commDate: DateTime.now().toLocal().toIso8601String(),
+            ),
           ),
-        ),
-      );
+        );
+      }
     }
   }
 

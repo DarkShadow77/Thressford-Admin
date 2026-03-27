@@ -207,7 +207,7 @@ class SubmissionTile extends StatelessWidget {
                     ),
                   ),
                 if (submission.appStatus == AppReferralStatus.pending ||
-                    submission.appStatus == AppReferralStatus.rejected)
+                    submission.appStatus == AppReferralStatus.declined)
                   Expanded(
                     child: IconTextButton(
                       onPressed: () {

@@ -13,9 +13,12 @@ import '../../../../app/view/widgets/thessford_icon.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/strings.dart';
 import '../../../../core/utils/helpers.dart';
+import '../../../referral_management/data/models/referral_status_enum.dart';
+import '../../../referral_management/data/models/response/referral_response_model.dart';
 import '../../../referral_management/presentation/bloc/referral_bloc.dart';
 import '../../../settings/data/models/admin_enum.dart';
 import '../../../settings/presentation/widgets/warning_dialog.dart';
+import '../../../user_management/data/models/response/users_response_model.dart';
 import '../../../user_management/presentation/bloc/users_bloc.dart';
 import '../../../withdrawal_request/presentation/bloc/transaction_bloc.dart';
 import '../../data/models/response/overview_response_model.dart';
@@ -45,44 +48,6 @@ class _DashboardPageState extends State<DashboardPage> {
     final userProfile = profileBloc.state.profile;
     currentRole = userProfile.role;
   }
-
-  List<Map<String, String>> quickActions = [
-    {
-      "title": "User Management",
-      "icon": AssetsSvgIcons.userGroup,
-      "route": RouteName.userManagementPage,
-    },
-    {
-      "title": "Referrals",
-      "icon": AssetsSvgIcons.stickyNote,
-      "route": RouteName.referralManagementPage,
-    },
-    {
-      "title": "Submissions",
-      "icon": AssetsSvgIcons.pound,
-      "route": RouteName.submissionPage,
-    },
-    {
-      "title": "Payments",
-      "icon": AssetsSvgIcons.checkCircle,
-      "route": RouteName.paymentPage,
-    },
-    {
-      "title": "Reports",
-      "icon": AssetsSvgIcons.rise,
-      "route": RouteName.reportPage,
-    },
-    {
-      "title": "Settings",
-      "icon": AssetsSvgIcons.settings,
-      "route": RouteName.settingsPage,
-    },
-    {
-      "title": "Withdrawal Request",
-      "icon": AssetsSvgIcons.pound,
-      "route": RouteName.withdrawalRequestPage,
-    },
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -128,25 +93,6 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                 ),
                 ThemeToggle(),
-                Container(
-                  width: 40.r,
-                  height: 40.r,
-                  decoration: BoxDecoration(
-                    color: AppColors.dynamic025,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: SvgPicture.asset(
-                      AssetsSvgIcons.notification,
-                      width: 24.w,
-                      height: 24.h,
-                      colorFilter: ColorFilter.mode(
-                        AppColors.dynamic,
-                        BlendMode.srcIn,
-                      ),
-                    ),
-                  ),
-                ),
               ],
             ),
             centerTitle: false,
@@ -188,6 +134,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           );
                         }).toList(),
                       ),
+                      SizedBox(height: 24.h),
                     ]),
                   ),
                 ),
@@ -198,6 +145,44 @@ class _DashboardPageState extends State<DashboardPage> {
       },
     );
   }
+
+  List<Map<String, String>> quickActions = [
+    {
+      "title": "User Management",
+      "icon": AssetsSvgIcons.userGroup,
+      "route": RouteName.userManagementPage,
+    },
+    {
+      "title": "Referrals",
+      "icon": AssetsSvgIcons.stickyNote,
+      "route": RouteName.referralManagementPage,
+    },
+    {
+      "title": "Submissions",
+      "icon": AssetsSvgIcons.pound,
+      "route": RouteName.submissionPage,
+    },
+    {
+      "title": "Payments",
+      "icon": AssetsSvgIcons.checkCircle,
+      "route": RouteName.paymentPage,
+    },
+    {
+      "title": "Reports",
+      "icon": AssetsSvgIcons.rise,
+      "route": RouteName.reportPage,
+    },
+    {
+      "title": "Settings",
+      "icon": AssetsSvgIcons.settings,
+      "route": RouteName.settingsPage,
+    },
+    {
+      "title": "Withdrawal Request",
+      "icon": AssetsSvgIcons.pound,
+      "route": RouteName.withdrawalRequestPage,
+    },
+  ];
 }
 
 class QuickAction extends StatelessWidget {
@@ -292,60 +277,93 @@ class OverviewWidget extends StatefulWidget {
 }
 
 class _OverviewWidgetState extends State<OverviewWidget> {
+  List<ReferralModel> referrals = [];
+  List<UsersModel> users = [];
+
+  double get _totalPaidCommissions => referrals
+      .where((r) {
+        final isPaid =
+            r.commissionStatus == CommissionStatus.paid ||
+            r.enrollStatus == EnrollReferralStatus.paid;
+        return isPaid;
+      })
+      .fold(
+        0.0,
+        (sum, r) => sum + (double.tryParse(r.expectedCommission) ?? 0),
+      );
+
+  double get _totalPendingCommissions => referrals
+      .where((r) {
+        return r.commissionStatus == CommissionStatus.pending;
+      })
+      .fold(
+        0.0,
+        (sum, r) => sum + (double.tryParse(r.expectedCommission) ?? 0),
+      );
+
+  int get _totalReferrals => referrals.length;
+  int get _totalUsers => users.length;
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<DashboardBloc, DashboardState>(
+    return BlocBuilder<ReferralBloc, ReferralState>(
       builder: (context, state) {
-        final overview = state.overview;
-        return Column(
-          spacing: 12.h,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              spacing: 12.w,
-              crossAxisAlignment: CrossAxisAlignment.center,
+        referrals = state.referral;
+        return BlocBuilder<UsersBloc, UsersState>(
+          builder: (context, state) {
+            users = state.users;
+            return Column(
+              spacing: 12.h,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Expanded(
-                  child: OverviewSubWidget(
-                    title: "Total users",
-                    value: formatAmount(overview.totalUsers),
-                    color: isDark() ? AppColors.navyBlue : AppColors.dynamic,
-                    icon: AssetsSvgIcons.userGroup,
-                  ),
+                Row(
+                  spacing: 12.w,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: OverviewSubWidget(
+                        title: "Total users",
+                        value: formatAmount(_totalUsers),
+                        color: isDark()
+                            ? AppColors.navyBlue
+                            : AppColors.dynamic,
+                        icon: AssetsSvgIcons.userGroup,
+                      ),
+                    ),
+                    Expanded(
+                      child: OverviewSubWidget(
+                        title: "Total Referrals",
+                        value: formatAmount(_totalReferrals),
+                        color: AppColors.orange,
+                        icon: AssetsSvgIcons.stickyNote,
+                      ),
+                    ),
+                  ],
                 ),
-                Expanded(
-                  child: OverviewSubWidget(
-                    title: "Total Referrals",
-                    value: formatAmount(overview.totalReferrals),
-                    color: AppColors.orange,
-                    icon: AssetsSvgIcons.stickyNote,
-                  ),
+                Row(
+                  spacing: 12.w,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: OverviewSubWidget(
+                        title: "Pending Commission",
+                        value: "£${formatAmount(_totalPendingCommissions)}",
+                        color: AppColors.primary,
+                        icon: AssetsSvgIcons.pound,
+                      ),
+                    ),
+                    Expanded(
+                      child: OverviewSubWidget(
+                        title: "Paid Commission",
+                        value: "£${formatAmount(_totalPaidCommissions)}",
+                        color: AppColors.green,
+                        icon: AssetsSvgIcons.checkCircle,
+                      ),
+                    ),
+                  ],
                 ),
               ],
-            ),
-            Row(
-              spacing: 12.w,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: OverviewSubWidget(
-                    title: "Pending Commission",
-                    value: "£${formatAmount(2300)}",
-                    color: AppColors.primary,
-                    icon: AssetsSvgIcons.pound,
-                  ),
-                ),
-                Expanded(
-                  child: OverviewSubWidget(
-                    title: "Paid Commission",
-                    value: "£${formatAmount(overview.totalPaidSum)}",
-                    color: AppColors.green,
-                    icon: AssetsSvgIcons.checkCircle,
-                  ),
-                ),
-              ],
-            ),
-          ],
+            );
+          },
         );
       },
     );

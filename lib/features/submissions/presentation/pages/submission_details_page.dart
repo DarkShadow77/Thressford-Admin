@@ -43,7 +43,7 @@ class _SubmissionDetailsPageState extends State<SubmissionDetailsPage>
           (element) => element.id == submission.id,
         );
         final isAppRejected =
-            submission.appStatus == AppReferralStatus.rejected;
+            submission.appStatus == AppReferralStatus.declined;
 
         return Scaffold(
           appBar: AppBar(
@@ -461,7 +461,7 @@ class _SubmissionDetailsPageState extends State<SubmissionDetailsPage>
                           if (submission.appStatus ==
                                   AppReferralStatus.pending ||
                               submission.appStatus ==
-                                  AppReferralStatus.rejected)
+                                  AppReferralStatus.declined)
                             Expanded(
                               child: IconTextButton(
                                 onPressed: () {

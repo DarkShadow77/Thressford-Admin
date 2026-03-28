@@ -42,8 +42,7 @@ class _SubmissionDetailsPageState extends State<SubmissionDetailsPage>
         submission = state.referral.firstWhere(
           (element) => element.id == submission.id,
         );
-        final isAppRejected =
-            submission.appStatus == AppReferralStatus.declined;
+        final isAppRejected = submission.appStatus == AppReferralStatus.denied;
 
         return Scaffold(
           appBar: AppBar(
@@ -448,7 +447,7 @@ class _SubmissionDetailsPageState extends State<SubmissionDetailsPage>
                                   );
                                 },
                                 height: 42,
-                                text: "Reject",
+                                text: "Deny",
                                 iconWidget: Icon(
                                   Icons.cancel_outlined,
                                   color: AppColors.error,
@@ -460,8 +459,7 @@ class _SubmissionDetailsPageState extends State<SubmissionDetailsPage>
                             ),
                           if (submission.appStatus ==
                                   AppReferralStatus.pending ||
-                              submission.appStatus ==
-                                  AppReferralStatus.declined)
+                              submission.appStatus == AppReferralStatus.denied)
                             Expanded(
                               child: IconTextButton(
                                 onPressed: () {

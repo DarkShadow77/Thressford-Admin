@@ -41,7 +41,7 @@ class ReferralTile extends StatelessWidget {
               "This referral is still pending review. You cannot update the enrolment status until the application has been approved.",
         );
         return;
-      } else if (referral.appStatus == AppReferralStatus.declined) {
+      } else if (referral.appStatus == AppReferralStatus.denied) {
         warningDialog(
           text:
               "This referral application has been rejected. The enrolment status cannot be updated for rejected applications.",
@@ -111,7 +111,7 @@ class ReferralTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isPending = referral.appStatus == AppReferralStatus.pending;
-    final isAppRejected = referral.appStatus == AppReferralStatus.declined;
+    final isAppRejected = referral.appStatus == AppReferralStatus.denied;
     final bool isCancelled =
         referral.enrollStatus == EnrollReferralStatus.cancelled;
     return GestureDetector(

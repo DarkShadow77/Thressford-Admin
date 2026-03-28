@@ -90,7 +90,7 @@ class _SubmissionRejectionReasonDialogState
           request: UpdateReferralAppStatusRequestModel(
             email: widget.submission.email,
             appDate: DateTime.now().toLocal().toIso8601String(),
-            appStat: AppReferralStatus.declined,
+            appStat: AppReferralStatus.denied,
             token: await LocalStorageHelper().getAccessToken() ?? "",
             comment: _reasonController.text.trim(),
           ),

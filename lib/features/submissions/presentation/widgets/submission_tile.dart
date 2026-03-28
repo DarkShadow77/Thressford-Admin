@@ -196,7 +196,7 @@ class SubmissionTile extends StatelessWidget {
                         rejectSubmissionDialog(submission: submission);
                       },
                       height: 42,
-                      text: "Reject",
+                      text: "Deny",
                       iconWidget: Icon(
                         Icons.cancel_outlined,
                         color: AppColors.error,
@@ -207,7 +207,7 @@ class SubmissionTile extends StatelessWidget {
                     ),
                   ),
                 if (submission.appStatus == AppReferralStatus.pending ||
-                    submission.appStatus == AppReferralStatus.declined)
+                    submission.appStatus == AppReferralStatus.denied)
                   Expanded(
                     child: IconTextButton(
                       onPressed: () {

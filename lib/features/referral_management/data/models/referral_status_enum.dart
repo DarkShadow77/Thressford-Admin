@@ -92,15 +92,15 @@ extension EnrollReferralStatusExtension on EnrollReferralStatus {
   bool get isConverted => level >= 5;
 }
 
-enum AppReferralStatus { pending, declined, approved }
+enum AppReferralStatus { pending, denied, approved }
 
 extension AppReferralStatusExtension on AppReferralStatus {
   String get statusString {
     switch (this) {
       case AppReferralStatus.pending:
         return 'pending';
-      case AppReferralStatus.declined:
-        return 'declined';
+      case AppReferralStatus.denied:
+        return 'denied';
       case AppReferralStatus.approved:
         return 'approved';
     }
@@ -110,8 +110,8 @@ extension AppReferralStatusExtension on AppReferralStatus {
     switch (status.toLowerCase()) {
       case 'pending':
         return AppReferralStatus.pending;
-      case 'declined':
-        return AppReferralStatus.declined;
+      case 'denied':
+        return AppReferralStatus.denied;
       case 'approved':
         return AppReferralStatus.approved;
       default:

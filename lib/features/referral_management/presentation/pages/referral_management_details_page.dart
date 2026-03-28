@@ -45,7 +45,7 @@ class _ReferralManagementDetailsPageState
         );
 
         final isPending = referral.appStatus == AppReferralStatus.pending;
-        final isAppRejected = referral.appStatus == AppReferralStatus.declined;
+        final isAppRejected = referral.appStatus == AppReferralStatus.denied;
         final isCancelled =
             referral.enrollStatus == EnrollReferralStatus.cancelled;
         return Scaffold(

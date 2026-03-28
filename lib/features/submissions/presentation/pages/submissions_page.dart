@@ -168,7 +168,7 @@ class _SubmissionPageState extends State<SubmissionPage>
                           tabs: [
                             Tab(text: 'Pending'),
                             Tab(text: 'Approved '),
-                            Tab(text: 'Rejected'),
+                            Tab(text: 'Denied'),
                           ],
                         ),
                       ),
@@ -188,7 +188,7 @@ class _SubmissionPageState extends State<SubmissionPage>
                         submissions: submissions,
                       ),
                       TabViewWidget(
-                        status: AppReferralStatus.declined,
+                        status: AppReferralStatus.denied,
                         submissions: submissions,
                       ),
                     ],

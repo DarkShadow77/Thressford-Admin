@@ -22,11 +22,6 @@ class _SplashScreenPageState extends State<SplashScreenPage>
     super.initState();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   /*Widget nextScreen() {
     final hasProfile = context.read<ProfileBloc>().state is ProfileSuccessState;
     if (hasProfile) {

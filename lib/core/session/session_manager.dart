@@ -7,7 +7,7 @@ class SessionManager {
   SessionManager._();
   static final SessionManager instance = SessionManager._();
 
-  static const _idleDuration = Duration(minutes: 1);
+  static const _idleDuration = Duration(minutes: 5);
   static const _warningCountdown = Duration(seconds: 15);
 
   Timer? _idleTimer;

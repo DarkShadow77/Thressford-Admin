@@ -17,19 +17,27 @@ import '../../../../core/utils/ui_tool_mix.dart';
 import '../../data/models/response/users_response_model.dart';
 import '../bloc/users_bloc.dart';
 
-Future<dynamic> deactivateUserDialog({required UsersModel user}) async {
+Future<dynamic> deactivateUserDialog({
+  required UsersModel user,
+  bool deactivate = true,
+}) async {
   return Get.dialog(
     name: "deactivate_user_dialog",
     barrierColor: Colors.transparent,
     barrierDismissible: true,
-    DeactivateUserDialog(user: user),
+    DeactivateUserDialog(user: user, deactivate: deactivate),
   );
 }
 
 class DeactivateUserDialog extends StatefulWidget {
-  const DeactivateUserDialog({super.key, required this.user});
+  const DeactivateUserDialog({
+    super.key,
+    required this.user,
+    required this.deactivate,
+  });
 
   final UsersModel user;
+  final bool deactivate;
 
   @override
   State<DeactivateUserDialog> createState() => _DeactivateUserDialogState();
@@ -40,29 +48,33 @@ class _DeactivateUserDialogState extends State<DeactivateUserDialog>
   bool loading = false;
 
   void _loadingUsersState(BuildContext context, UsersLoadingState state) {
-    if (state.type == UsersType.deactivateUser) {
+    if (state.type == UsersType.deactivateUser ||
+        state.type == UsersType.unsuspendUser) {
       setState(() => loading = true);
     }
   }
 
   void _successUsersState(BuildContext context, UsersSuccessState state) {
-    if (state.type == UsersType.deactivateUser) {
+    if (state.type == UsersType.deactivateUser ||
+        state.type == UsersType.unsuspendUser) {
       context.read<UsersBloc>().add(GetAllUsersEvent());
       Future.delayed((Duration(seconds: 1)), () {
         setState(() => loading = false);
         Navigator.pop(context);
         userStatusSuccessfulDialog(
           user: widget.user,
-          title: "User Deactivated",
-          subTitle:
-              "${widget.user}’s account has been deactivated successfully.",
+          title: widget.deactivate ? "User Deactivated" : "User Reactivated",
+          subTitle: widget.deactivate
+              ? "${widget.user.fullName}’s account has been deactivated successfully."
+              : "${widget.user.fullName}’s account has been successfully reactivated",
         );
       });
     }
   }
 
   void _failedUsersState(BuildContext context, UsersFailureState state) {
-    if (state.type == UsersType.deactivateUser) {
+    if (state.type == UsersType.deactivateUser ||
+        state.type == UsersType.unsuspendUser) {
       setState(() => loading = false);
       showMessage(context, state.message, status: true);
     }
@@ -137,14 +149,20 @@ class _DeactivateUserDialogState extends State<DeactivateUserDialog>
                             width: 60.r,
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
-                              color: AppColors.error5,
+                              color: widget.deactivate
+                                  ? AppColors.error5
+                                  : AppColors.green5,
                               shape: BoxShape.circle,
                             ),
                             child: IconButton(
                               onPressed: () => Navigator.pop(context),
                               icon: HugeIcon(
-                                icon: HugeIcons.strokeRoundedCancel01,
-                                color: AppColors.error,
+                                icon: widget.deactivate
+                                    ? HugeIcons.strokeRoundedCancel01
+                                    : HugeIcons.strokeRoundedPlay,
+                                color: widget.deactivate
+                                    ? AppColors.error
+                                    : AppColors.green,
                                 size: 18.sp,
                               ),
                             ),
@@ -153,7 +171,9 @@ class _DeactivateUserDialogState extends State<DeactivateUserDialog>
                           RichText(
                             textAlign: TextAlign.center,
                             text: TextSpan(
-                              text: "Deactivate User?",
+                              text: widget.deactivate
+                                  ? "Deactivate User?"
+                                  : "Reactivate User?",
                               style: TextStyles.titleSemiBold20(context),
                             ),
                           ),
@@ -161,8 +181,9 @@ class _DeactivateUserDialogState extends State<DeactivateUserDialog>
                           RichText(
                             textAlign: TextAlign.center,
                             text: TextSpan(
-                              text:
-                                  "This will permanently deactivate ${widget.user.fullName}'s account. This action cannot be undone.",
+                              text: widget.deactivate
+                                  ? "This will deactivate ${widget.user.fullName}'s account. This action cannot be undone without a Super Admin Authority."
+                                  : "Are you sure you want to reactivate ${widget.user.fullName}'s account?",
                               style: TextStyles.normalRegular14(
                                 context,
                                 opacity: .5,
@@ -189,14 +210,23 @@ class _DeactivateUserDialogState extends State<DeactivateUserDialog>
                                 child: IconTextButton(
                                   height: 53,
                                   onPressed: () {
-                                    context.read<UsersBloc>().add(
-                                      DeactivateUserEvent(
-                                        email: widget.user.email,
-                                        status: UsersStatus.inactive,
-                                      ),
-                                    );
+                                    widget.deactivate
+                                        ? context.read<UsersBloc>().add(
+                                            DeactivateUserEvent(
+                                              email: widget.user.email,
+                                              status: UsersStatus.inactive,
+                                            ),
+                                          )
+                                        : context.read<UsersBloc>().add(
+                                            UnsuspendUserEvent(
+                                              email: widget.user.email,
+                                              status: UsersStatus.active,
+                                            ),
+                                          );
                                   },
-                                  text: "Deactivate",
+                                  text: widget.deactivate
+                                      ? "Deactivate"
+                                      : "Reactivate",
                                   buttonState: loading
                                       ? AppButtonState.loading
                                       : AppButtonState.idle,

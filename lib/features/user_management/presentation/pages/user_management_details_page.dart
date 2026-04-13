@@ -16,10 +16,12 @@ import '../../../../../app/styles/text_styles.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/utils/ui_tool_mix.dart';
+import '../../../dashboard/presentation/bloc/dashboard_bloc.dart';
 import '../../../dashboard/presentation/pages/dashboard_page.dart';
 import '../../../referral_management/data/models/referral_status_enum.dart';
 import '../../../referral_management/data/models/response/referral_response_model.dart';
 import '../../../referral_management/presentation/bloc/referral_bloc.dart';
+import '../../../settings/data/models/admin_enum.dart';
 import '../../data/models/response/users_response_model.dart';
 import '../bloc/users_bloc.dart';
 
@@ -37,12 +39,17 @@ class _UserManagementDetailsPageState extends State<UserManagementDetailsPage>
     with UIToolMixin {
   UsersModel user = UsersModel.empty();
   List<ReferralModel> referrals = [];
+  AdminRole currentRole = AdminRole.admin;
 
   @override
   void initState() {
     super.initState();
     user = widget.param.user;
     context.read<ReferralBloc>().add(GetAllReferralEvent());
+
+    final profileBloc = context.read<DashboardBloc>();
+    final userProfile = profileBloc.state.profile;
+    currentRole = userProfile.role;
   }
 
   double _totalPaidForUser(String userId) {
@@ -471,6 +478,27 @@ class _UserManagementDetailsPageState extends State<UserManagementDetailsPage>
                                   color: AppColors.error,
                                 ),
                               ),
+                          ] else if (currentRole.level >= 3) ...[
+                            SizedBox(height: 40.h),
+                            IconTextButton(
+                              height: 44,
+                              radius: 14,
+                              onPressed: () {
+                                deactivateUserDialog(
+                                  user: user,
+                                  deactivate: false,
+                                );
+                              },
+                              text: "Reactivate",
+                              color: AppColors.green5,
+                              textColor: AppColors.green,
+                              borderColor: AppColors.green,
+                              iconWidget: HugeIcon(
+                                icon: HugeIcons.strokeRoundedPlay,
+                                color: AppColors.green,
+                                size: 20.sp,
+                              ),
+                            ),
                           ],
                           SizedBox(
                             height:

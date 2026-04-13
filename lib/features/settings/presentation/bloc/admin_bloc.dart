@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
+import '../../../../core/session/session_manager.dart';
 import '../../data/models/request/add_admin_request_model.dart';
 import '../../data/models/request/delete_admin_request_model.dart';
 import '../../data/models/request/update_admin_status_request_model.dart';
@@ -26,6 +27,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     Emitter<AdminState> emit,
   ) async {
     emit(AdminLoadingState(type: AdminType.getAllAdmins, admins: state.admins));
+    SessionManager.instance.notifyLoading(true);
 
     final response = await repo.getAllAdmins();
 
@@ -48,6 +50,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
         );
       },
     );
+    SessionManager.instance.notifyLoading(false);
   }
 
   Future<void> _onAddAdmin(
@@ -55,6 +58,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     Emitter<AdminState> emit,
   ) async {
     emit(AdminLoadingState(type: AdminType.addAdmin, admins: state.admins));
+    SessionManager.instance.notifyLoading(true);
 
     final response = await repo.addAdmin(request: event.request);
 
@@ -74,6 +78,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
         ),
       ),
     );
+    SessionManager.instance.notifyLoading(false);
   }
 
   Future<void> _onDeleteAdmin(
@@ -81,6 +86,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     Emitter<AdminState> emit,
   ) async {
     emit(AdminLoadingState(type: AdminType.deleteAdmin, admins: state.admins));
+    SessionManager.instance.notifyLoading(true);
 
     final response = await repo.deleteAdmin(request: event.request);
 
@@ -100,6 +106,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
         ),
       ),
     );
+    SessionManager.instance.notifyLoading(false);
   }
 
   Future<void> _onUpdateAdminStatus(
@@ -112,6 +119,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
         admins: state.admins,
       ),
     );
+    SessionManager.instance.notifyLoading(true);
 
     final response = await repo.updateAdminStatus(request: event.request);
 
@@ -131,5 +139,6 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
         ),
       ),
     );
+    SessionManager.instance.notifyLoading(false);
   }
 }

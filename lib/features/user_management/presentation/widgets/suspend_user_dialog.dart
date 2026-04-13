@@ -57,16 +57,16 @@ class _SuspendUserDialogState extends State<SuspendUserDialog>
   void _successUsersState(BuildContext context, UsersSuccessState state) {
     if (state.type == UsersType.suspendUser ||
         state.type == UsersType.unsuspendUser) {
+      context.read<UsersBloc>().add(GetAllUsersEvent());
       Future.delayed((Duration(seconds: 1)), () {
         setState(() => loading = false);
-        context.read<UsersBloc>().add(GetAllUsersEvent());
         Navigator.pop(context);
         userStatusSuccessfulDialog(
           user: widget.user,
           title: widget.suspend ? "User Suspended" : "User Unsuspended",
           subTitle: widget.suspend
-              ? "${widget.user}’s account has been suspended successfully."
-              : "${widget.user}’s account has been successfully Re-activated",
+              ? "${widget.user.fullName}’s account has been suspended successfully."
+              : "${widget.user.fullName}’s account has been successfully Re-activated",
         );
       });
     }

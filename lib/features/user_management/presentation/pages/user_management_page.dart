@@ -15,9 +15,11 @@ import '../../../../app/styles/text_styles.dart';
 import '../../../../app/view/widgets/input/search_text_input.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/navigators/route_name.dart';
+import '../../../dashboard/presentation/bloc/dashboard_bloc.dart';
 import '../../../referral_management/data/models/referral_status_enum.dart';
 import '../../../referral_management/data/models/response/referral_response_model.dart';
 import '../../../referral_management/presentation/bloc/referral_bloc.dart';
+import '../../../settings/data/models/admin_enum.dart';
 import '../bloc/users_bloc.dart';
 import 'user_management_details_page.dart';
 
@@ -39,6 +41,8 @@ class _UserManagementPageState extends State<UserManagementPage> {
   List<UsersModel> users = [];
   List<ReferralModel> referrals = [];
 
+  AdminRole currentRole = AdminRole.admin;
+
   @override
   void initState() {
     super.initState();
@@ -46,6 +50,9 @@ class _UserManagementPageState extends State<UserManagementPage> {
     users = userBloc.state.users;
     userBloc.add(GetAllUsersEvent());
     context.read<ReferralBloc>().add(GetAllReferralEvent());
+    final profileBloc = context.read<DashboardBloc>();
+    final userProfile = profileBloc.state.profile;
+    currentRole = userProfile.role;
 
     searchData.addAll(users);
   }
@@ -303,6 +310,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
                                   return UsersTile(
                                     user: user,
                                     referrals: referrals,
+                                    currentRole: currentRole,
                                   );
                                 },
                                 separatorBuilder: (_, _) =>
@@ -322,10 +330,16 @@ class _UserManagementPageState extends State<UserManagementPage> {
 }
 
 class UsersTile extends StatelessWidget {
-  const UsersTile({super.key, required this.user, required this.referrals});
+  const UsersTile({
+    super.key,
+    required this.user,
+    required this.referrals,
+    required this.currentRole,
+  });
 
   final UsersModel user;
   final List<ReferralModel> referrals;
+  final AdminRole currentRole;
 
   double _totalPaidForUser(String userId) {
     return referrals
@@ -484,6 +498,8 @@ class UsersTile extends StatelessWidget {
                       );
                     } else if (value == "deactivate") {
                       deactivateUserDialog(user: user);
+                    } else if (value == "activate") {
+                      deactivateUserDialog(user: user, deactivate: false);
                     } else if (value == "suspend") {
                       suspendUserDialog(user: user, suspend: true);
                     } else if (value == "unsuspend") {
@@ -543,7 +559,18 @@ class UsersTile extends StatelessWidget {
                             color: AppColors.error,
                           ),
                         ),
-                    ],
+                    ] else if (currentRole.level >= 3)
+                      _buildPopupMenuItem(
+                        context,
+                        value: "activate",
+                        text: "Reactivate",
+                        color: AppColors.green,
+                        icon: HugeIcon(
+                          icon: HugeIcons.strokeRoundedPlay,
+                          color: AppColors.green,
+                          size: 20.sp,
+                        ),
+                      ),
                   ],
                   child: Center(
                     child: Icon(

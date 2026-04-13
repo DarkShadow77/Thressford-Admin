@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
+import '../../../../core/session/session_manager.dart';
 import '../../data/models/request/update_transaction_status_request_model.dart';
 import '../../data/models/response/transaction_response_model.dart';
 import '../../domain/repositories/transaction_repository.dart';
@@ -28,6 +29,7 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
         transactions: state.transactions,
       ),
     );
+    SessionManager.instance.notifyLoading(true);
 
     final response = await repo.getAllTransactions();
 
@@ -50,6 +52,7 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
         );
       },
     );
+    SessionManager.instance.notifyLoading(false);
   }
 
   Future<void> _onUpdateTransactionStatus(
@@ -62,6 +65,7 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
         transactions: state.transactions,
       ),
     );
+    SessionManager.instance.notifyLoading(true);
 
     final response = await repo.updateTransactionStatus(request: event.request);
 
@@ -81,5 +85,6 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
         ),
       ),
     );
+    SessionManager.instance.notifyLoading(false);
   }
 }

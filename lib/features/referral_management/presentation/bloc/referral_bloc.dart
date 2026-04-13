@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
+import '../../../../core/session/session_manager.dart';
 import '../../data/models/request/delete_referral_request_model.dart';
 import '../../data/models/request/update_commission_request_model.dart';
 import '../../data/models/request/update_commission_status_request_model.dart';
@@ -36,6 +37,7 @@ class ReferralBloc extends Bloc<ReferralEvent, ReferralState> {
         referral: state.referral,
       ),
     );
+    SessionManager.instance.notifyLoading(true);
 
     final response = await repo.getAllReferrals();
 
@@ -58,6 +60,7 @@ class ReferralBloc extends Bloc<ReferralEvent, ReferralState> {
         );
       },
     );
+    SessionManager.instance.notifyLoading(false);
   }
 
   Future<void> _onUpdateCommission(
@@ -70,6 +73,7 @@ class ReferralBloc extends Bloc<ReferralEvent, ReferralState> {
         referral: state.referral,
       ),
     );
+    SessionManager.instance.notifyLoading(true);
 
     final response = await repo.updateCommission(request: event.request);
 
@@ -89,6 +93,7 @@ class ReferralBloc extends Bloc<ReferralEvent, ReferralState> {
         ),
       ),
     );
+    SessionManager.instance.notifyLoading(false);
   }
 
   Future<void> _onUpdateCommissionStatus(
@@ -101,6 +106,7 @@ class ReferralBloc extends Bloc<ReferralEvent, ReferralState> {
         referral: state.referral,
       ),
     );
+    SessionManager.instance.notifyLoading(true);
 
     final response = await repo.updateCommissionStatus(request: event.request);
 
@@ -120,6 +126,7 @@ class ReferralBloc extends Bloc<ReferralEvent, ReferralState> {
         ),
       ),
     );
+    SessionManager.instance.notifyLoading(false);
   }
 
   Future<void> _onDeleteReferral(
@@ -132,6 +139,7 @@ class ReferralBloc extends Bloc<ReferralEvent, ReferralState> {
         referral: state.referral,
       ),
     );
+    SessionManager.instance.notifyLoading(true);
 
     final response = await repo.deleteReferral(request: event.request);
 
@@ -151,6 +159,7 @@ class ReferralBloc extends Bloc<ReferralEvent, ReferralState> {
         ),
       ),
     );
+    SessionManager.instance.notifyLoading(false);
   }
 
   Future<void> _onUpdateReferralAppStatus(
@@ -163,6 +172,7 @@ class ReferralBloc extends Bloc<ReferralEvent, ReferralState> {
         referral: state.referral,
       ),
     );
+    SessionManager.instance.notifyLoading(true);
 
     final response = await repo.updateReferralAppStatus(request: event.request);
 
@@ -182,6 +192,7 @@ class ReferralBloc extends Bloc<ReferralEvent, ReferralState> {
         ),
       ),
     );
+    SessionManager.instance.notifyLoading(false);
   }
 
   Future<void> _onUpdateEnrollStatus(
@@ -194,6 +205,7 @@ class ReferralBloc extends Bloc<ReferralEvent, ReferralState> {
         referral: state.referral,
       ),
     );
+    SessionManager.instance.notifyLoading(true);
 
     final response = await repo.updateEnrollStatus(request: event.request);
 
@@ -213,5 +225,6 @@ class ReferralBloc extends Bloc<ReferralEvent, ReferralState> {
         ),
       ),
     );
+    SessionManager.instance.notifyLoading(false);
   }
 }

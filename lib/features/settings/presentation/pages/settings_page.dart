@@ -6,6 +6,7 @@ import 'package:thressford_admin/core/constants/app_assets.dart';
 
 import '../../../../app/styles/text_styles.dart';
 import '../../../../app/theme/bloc/theme_bloc.dart';
+import '../../../../app/view/widgets/buttons/icon_text_button.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/navigators/route_name.dart';
 import '../../../../core/utils/helpers.dart';
@@ -179,6 +180,18 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                     ),
                   ),
+                  IconTextButton(
+                    onPressed: () =>
+                        Navigator.pushNamed(context, RouteName.logoutPage),
+                    text: "Log Out",
+                    color: AppColors.primary10,
+                    iconSize: 24,
+                    icon: AssetsSvgIcons.logout,
+                    iconColor: AppColors.primary50,
+                    borderColor: AppColors.primary10,
+                    textColor: AppColors.primary50,
+                  ),
+                  SizedBox(height: 20.h),
                 ],
               ),
             ),

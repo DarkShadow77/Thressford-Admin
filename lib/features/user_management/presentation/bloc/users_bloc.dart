@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:thressford_admin/features/user_management/data/models/response/users_response_model.dart';
 
+import '../../../../core/session/session_manager.dart';
 import '../../../../core/utils/local_storage.dart';
 import '../../data/models/request/delete_user_request_model.dart';
 import '../../data/models/request/update_user_status_request_model.dart';
@@ -29,6 +30,7 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
     Emitter<UsersState> emit,
   ) async {
     emit(UsersLoadingState(type: UsersType.getAllUsers, users: state.users));
+    SessionManager.instance.notifyLoading(true);
 
     final response = await repo.getAllUsers();
 
@@ -51,6 +53,7 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
         );
       },
     );
+    SessionManager.instance.notifyLoading(false);
   }
 
   Future<void> _onDeleteUser(
@@ -58,6 +61,7 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
     Emitter<UsersState> emit,
   ) async {
     emit(UsersLoadingState(type: UsersType.deleteUser, users: state.users));
+    SessionManager.instance.notifyLoading(true);
 
     final response = await repo.deleteUser(request: event.request);
 
@@ -77,6 +81,7 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
         ),
       ),
     );
+    SessionManager.instance.notifyLoading(false);
   }
 
   Future<void> _onDeactivateUser(
@@ -84,6 +89,7 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
     Emitter<UsersState> emit,
   ) async {
     emit(UsersLoadingState(type: UsersType.deactivateUser, users: state.users));
+    SessionManager.instance.notifyLoading(true);
 
     final response = await repo.updateUserStatus(
       request: UpdateUserStatusRequestModel(
@@ -110,6 +116,7 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
         ),
       ),
     );
+    SessionManager.instance.notifyLoading(false);
   }
 
   Future<void> _onSuspendUser(
@@ -117,6 +124,7 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
     Emitter<UsersState> emit,
   ) async {
     emit(UsersLoadingState(type: UsersType.suspendUser, users: state.users));
+    SessionManager.instance.notifyLoading(true);
 
     final response = await repo.updateUserStatus(
       request: UpdateUserStatusRequestModel(
@@ -143,6 +151,7 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
         ),
       ),
     );
+    SessionManager.instance.notifyLoading(false);
   }
 
   Future<void> _onUnsuspendUser(
@@ -150,6 +159,7 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
     Emitter<UsersState> emit,
   ) async {
     emit(UsersLoadingState(type: UsersType.unsuspendUser, users: state.users));
+    SessionManager.instance.notifyLoading(true);
 
     final response = await repo.updateUserStatus(
       request: UpdateUserStatusRequestModel(
@@ -176,5 +186,6 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
         ),
       ),
     );
+    SessionManager.instance.notifyLoading(false);
   }
 }

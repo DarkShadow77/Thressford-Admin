@@ -290,20 +290,22 @@ class ReferralTile extends StatelessWidget {
                               BlendMode.srcIn,
                             ),
                           ),
-                          RichText(
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            text: TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: referral.referredBy,
-                                  style: TextStyles.normalRegular14(context),
+                          Expanded(
+                            child: RichText(
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: referral.referredBy,
+                                    style: TextStyles.normalRegular14(context),
+                                  ),
+                                ],
+                                text: "Referred by: ",
+                                style: TextStyles.normalRegular14(
+                                  context,
+                                  opacity: .5,
                                 ),
-                              ],
-                              text: "Referred by: ",
-                              style: TextStyles.normalRegular14(
-                                context,
-                                opacity: .5,
                               ),
                             ),
                           ),
@@ -323,20 +325,22 @@ class ReferralTile extends StatelessWidget {
                               BlendMode.srcIn,
                             ),
                           ),
-                          RichText(
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            text: TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: formatDate(referral.createdAt),
-                                  style: TextStyles.normalRegular14(context),
+                          Expanded(
+                            child: RichText(
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: formatDate(referral.createdAt),
+                                    style: TextStyles.normalRegular14(context),
+                                  ),
+                                ],
+                                text: "Submitted: ",
+                                style: TextStyles.normalRegular14(
+                                  context,
+                                  opacity: .5,
                                 ),
-                              ],
-                              text: "Submitted: ",
-                              style: TextStyles.normalRegular14(
-                                context,
-                                opacity: .5,
                               ),
                             ),
                           ),

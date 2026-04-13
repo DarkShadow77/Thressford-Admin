@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/session/session_manager.dart';
 import '../../data/models/response/overview_response_model.dart';
 import '../../data/models/response/user_profile_response_model.dart';
 import '../../domain/repositories/dashboard_repository.dart';
@@ -47,6 +48,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
         overview: state.overview,
       ),
     );
+    SessionManager.instance.notifyLoading(true);
 
     final response = await repo.getOverview();
 
@@ -68,5 +70,6 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
         ),
       ),
     );
+    SessionManager.instance.notifyLoading(false);
   }
 }

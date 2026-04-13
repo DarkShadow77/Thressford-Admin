@@ -13,12 +13,14 @@ import '../../../features/report/presentation/pages/report_page.dart';
 import '../../../features/settings/presentation/pages/change_password_page.dart';
 import '../../../features/settings/presentation/pages/create_admin_successful_page.dart';
 import '../../../features/settings/presentation/pages/settings_page.dart';
+import '../../../features/settings/presentation/widgets/logout_page.dart';
 import '../../../features/submissions/presentation/pages/submission_details_page.dart';
 import '../../../features/submissions/presentation/pages/submissions_page.dart';
 import '../../../features/user_management/presentation/pages/user_management_details_page.dart';
 import '../../../features/user_management/presentation/pages/user_management_page.dart';
 import '../../../features/user_management/presentation/pages/user_referrals_page.dart';
 import '../../../features/withdrawal_request/presentation/pages/withdrawal_request_page.dart';
+import '../../shells/authenticated_shell.dart';
 import 'route_name.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
@@ -33,169 +35,120 @@ Route<dynamic> generateRoute(RouteSettings settings) {
         routeName: settings.name!,
         viewToShow: const LoginPage(),
       );
+
+    //DASHBOARD PAGE
     case RouteName.dashboardPage:
       return _getPageRoute(
         routeName: settings.name!,
-        viewToShow: const DashboardPage(),
-      );
-    case RouteName.paymentPage:
-      return _getPageRoute(
-        routeName: settings.name!,
-        viewToShow: const PaymentPage(),
+        viewToShow: AuthenticatedShell(child: const DashboardPage()),
       );
 
     //USERS MANAGEMENT PAGE
     case RouteName.userManagementPage:
       return _getPageRoute(
         routeName: settings.name!,
-        viewToShow: const UserManagementPage(),
+        viewToShow: AuthenticatedShell(child: const UserManagementPage()),
       );
     case RouteName.userManagementDetailsPage:
       final args = settings.arguments! as UserManagementDetailsPageParam;
       return _getPageRoute(
         routeName: settings.name!,
-        viewToShow: UserManagementDetailsPage(param: args),
+        viewToShow: AuthenticatedShell(
+          child: UserManagementDetailsPage(param: args),
+        ),
       );
     case RouteName.userReferralsPage:
       final args = settings.arguments! as UserReferralsPageParam;
       return _getPageRoute(
         routeName: settings.name!,
-        viewToShow: UserReferralsPage(param: args),
+        viewToShow: AuthenticatedShell(child: UserReferralsPage(param: args)),
       );
 
     //REFERRAL MANAGEMENT PAGE
     case RouteName.referralManagementPage:
       return _getPageRoute(
         routeName: settings.name!,
-        viewToShow: const ReferralManagementPage(),
+        viewToShow: AuthenticatedShell(child: const ReferralManagementPage()),
       );
     case RouteName.referralManagementDetailsPage:
       final args = settings.arguments! as ReferralManagementDetailsPageParam;
       return _getPageRoute(
         routeName: settings.name!,
-        viewToShow: ReferralManagementDetailsPage(param: args),
+        viewToShow: AuthenticatedShell(
+          child: ReferralManagementDetailsPage(param: args),
+        ),
       );
 
     //SUBMISSION PAGE
     case RouteName.submissionPage:
       return _getPageRoute(
         routeName: settings.name!,
-        viewToShow: const SubmissionPage(),
+        viewToShow: AuthenticatedShell(child: const SubmissionPage()),
       );
     case RouteName.submissionDetailsPage:
       final args = settings.arguments! as SubmissionDetailsPageParam;
       return _getPageRoute(
         routeName: settings.name!,
-        viewToShow: SubmissionDetailsPage(param: args),
+        viewToShow: AuthenticatedShell(
+          child: SubmissionDetailsPage(param: args),
+        ),
+      );
+
+    //PAYMENT PAGE
+    case RouteName.paymentPage:
+      return _getPageRoute(
+        routeName: settings.name!,
+        viewToShow: AuthenticatedShell(child: const PaymentPage()),
       );
 
     //REPORT PAGE
     case RouteName.reportPage:
       return _getPageRoute(
         routeName: settings.name!,
-        viewToShow: const ReportPage(),
+        viewToShow: AuthenticatedShell(child: const ReportPage()),
       );
 
     //SETTINGS PAGE
     case RouteName.settingsPage:
       return _getPageRoute(
         routeName: settings.name!,
-        viewToShow: const SettingsPage(),
+        viewToShow: AuthenticatedShell(child: const SettingsPage()),
       );
     case RouteName.changePasswordPage:
       return _getPageRoute(
         routeName: settings.name!,
-        viewToShow: ChangePasswordPage(),
+        viewToShow: AuthenticatedShell(child: ChangePasswordPage()),
       );
     case RouteName.manageAdminPage:
       return _getPageRoute(
         routeName: settings.name!,
-        viewToShow: ManageAdminPage(),
+        viewToShow: AuthenticatedShell(child: ManageAdminPage()),
       );
     case RouteName.createAdminPage:
       return _getPageRoute(
         routeName: settings.name!,
-        viewToShow: CreateAdminPage(),
+        viewToShow: AuthenticatedShell(child: CreateAdminPage()),
       );
     case RouteName.createAdminSuccessPage:
       final args = settings.arguments! as CreateAdminSuccessPageParam;
       return _getPageRoute(
         routeName: settings.name!,
-        viewToShow: CreateAdminSuccessPage(param: args),
+        viewToShow: AuthenticatedShell(
+          child: CreateAdminSuccessPage(param: args),
+        ),
+      );
+    case RouteName.logoutPage:
+      return _getPageRoute(
+        routeName: settings.name!,
+        viewToShow: AuthenticatedShell(child: LogoutPage()),
       );
 
     //WITHDRAWAL REQUEST PAGE
     case RouteName.withdrawalRequestPage:
       return _getPageRoute(
         routeName: settings.name!,
-        viewToShow: const WithdrawalRequestPage(),
+        viewToShow: AuthenticatedShell(child: const WithdrawalRequestPage()),
       );
-
-    //HOME PAGE
-    /*case RouteName.homePage:
-      return _getPageRoute(
-        routeName: settings.name!,
-        viewToShow: DashboardPage(param: DashboardPageParam(index: 0)),
-      );
-    case RouteName.submitReferralPage:
-      return _getPageRoute(
-        routeName: settings.name!,
-        viewToShow: SubmitReferralPage(),
-      );
-
-    //REFERRAL PAGE
-    case RouteName.referralPage:
-      return _getPageRoute(
-        routeName: settings.name!,
-        viewToShow: DashboardPage(param: DashboardPageParam(index: 1)),
-      );
-    case RouteName.referralDetailsPage:
-      final args = settings.arguments! as ReferralDetailsPageParam;
-      return _getPageRoute(
-        routeName: settings.name!,
-        viewToShow: ReferralDetailsPage(param: args),
-      );
-
-    //WALLET PAGE
-    case RouteName.walletPage:
-      return _getPageRoute(
-        routeName: settings.name!,
-        viewToShow: DashboardPage(param: DashboardPageParam(index: 2)),
-      );
-    case RouteName.requestWithdrawalPage:
-      return _getPageRoute(
-        routeName: settings.name!,
-        viewToShow: RequestWithdrawalPage(),
-      );
-
-    //PROFILE PAGE
-    case RouteName.profilePage:
-      return _getPageRoute(
-        routeName: settings.name!,
-        viewToShow: DashboardPage(param: DashboardPageParam(index: 3)),
-      );
-    case RouteName.editProfilePage:
-      return _getPageRoute(
-        routeName: settings.name!,
-        viewToShow: EditProfilePage(),
-      );
-    case RouteName.bankDetailsPage:
-      return _getPageRoute(
-        routeName: settings.name!,
-        viewToShow: BankDetailsPage(),
-      );
-    case RouteName.notificationPage:
-      return _getPageRoute(
-        routeName: settings.name!,
-        viewToShow: NotificationPage(),
-      );
-    case RouteName.changePasswordPage:
-      return _getPageRoute(
-        routeName: settings.name!,
-        viewToShow: ChangePasswordPage(),
-      );
-    case RouteName.logoutPage:
-      return _getPageRoute(routeName: settings.name!, viewToShow: LogoutPage());*/
 
     ///Universal Success Page
     case RouteName.successfulPage:

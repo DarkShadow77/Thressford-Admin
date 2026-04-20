@@ -96,7 +96,7 @@ class _SubmissionPageState extends State<SubmissionPage>
                               children: [
                                 RichText(
                                   text: TextSpan(
-                                    text: "Submission Approval",
+                                    text: "Referral Approval",
                                     style: TextStyles.bodySemiBold16(context),
                                   ),
                                 ),

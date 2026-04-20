@@ -299,9 +299,7 @@ class _OverviewWidgetState extends State<OverviewWidget> {
 
   double get _totalPaidCommissions => referrals
       .where((r) {
-        final isPaid =
-            r.commissionStatus == CommissionStatus.paid ||
-            r.enrollStatus == EnrollReferralStatus.paid;
+        final isPaid = r.commissionStatus == CommissionStatus.paid;
         return isPaid;
       })
       .fold(

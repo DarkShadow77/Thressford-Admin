@@ -659,9 +659,7 @@ class RevenueTrend extends StatelessWidget {
   double _paidForMonth(DateTime month) {
     return referrals
         .where((r) {
-          final isPaid =
-              r.commissionStatus == CommissionStatus.paid ||
-              r.enrollStatus == EnrollReferralStatus.paid;
+          final isPaid = r.commissionStatus == CommissionStatus.paid;
           if (!isPaid) return false;
           final raw = r.enrollModDate ?? r.updatedAt ?? r.createdAt;
           final d = DateTime.tryParse(raw);
@@ -955,9 +953,7 @@ class TopPerformers extends StatelessWidget {
   double _totalPaidForUser(String userId) {
     return referrals
         .where((r) {
-          final isPaid =
-              r.commissionStatus == CommissionStatus.paid ||
-              r.enrollStatus == EnrollReferralStatus.paid;
+          final isPaid = r.commissionStatus == CommissionStatus.paid;
           return isPaid && r.referer == userId;
         })
         .fold(

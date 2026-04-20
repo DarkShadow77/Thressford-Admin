@@ -13,9 +13,6 @@ import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/navigators/route_name.dart';
 import '../../../../core/utils/helpers.dart';
-import '../../../dashboard/presentation/bloc/dashboard_bloc.dart';
-import '../../../settings/data/models/admin_enum.dart';
-import '../../data/models/request/update_commission_status_request_model.dart';
 import '../../data/models/response/referral_response_model.dart';
 import '../bloc/referral_bloc.dart';
 import '../pages/referral_management_details_page.dart';
@@ -70,23 +67,6 @@ class ReferralTile extends StatelessWidget {
           return true;
         },
       );
-    } else if (value == "release commission") {
-      if (double.tryParse(referral.expectedCommission) == null ||
-          double.parse(referral.expectedCommission) <= 0) {
-        warningDialog(
-          text:
-              "Expected commission must be set before releasing commission. Please update the expected commission first.",
-        );
-      }
-      context.read<ReferralBloc>().add(
-        UpdateCommissionStatusEvent(
-          request: UpdateCommissionStatusRequestModel(
-            token: await LocalStorageHelper().getAccessToken() ?? "",
-            email: referral.email,
-            status: CommissionStatus.paid,
-          ),
-        ),
-      );
     } else if (value == "add note") {
       addNotesDialog(
         note: referral.adminEnrollNote,
@@ -114,9 +94,9 @@ class ReferralTile extends StatelessWidget {
     final bool isCancelled =
         referral.enrollStatus == EnrollReferralStatus.cancelled;
 
-    final profileBloc = context.read<DashboardBloc>();
-    final userProfile = profileBloc.state.profile;
-    AdminRole currentRole = userProfile.role;
+    final bool canShowCommissionStatus =
+        double.tryParse(referral.expectedCommission) == null ||
+        double.parse(referral.expectedCommission) <= 0;
 
     return GestureDetector(
       onTap: () => Navigator.pushNamed(
@@ -217,12 +197,6 @@ class ReferralTile extends StatelessWidget {
                       value: "update",
                       text: "Update Status",
                     ),
-                    if (currentRole.level >= 3)
-                      _buildPopupMenuItem(
-                        context,
-                        value: "release commission",
-                        text: "Release Commission",
-                      ),
                     _buildPopupMenuItem(
                       context,
                       value: "add note",
@@ -278,7 +252,7 @@ class ReferralTile extends StatelessWidget {
               ),
             ),
             Row(
-              spacing: 20.w,
+              spacing: 10.w,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Expanded(
@@ -359,6 +333,30 @@ class ReferralTile extends StatelessWidget {
                     ],
                   ),
                 ),
+                Container(),
+                if (!canShowCommissionStatus)
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      vertical: 4.h,
+                      horizontal: 8.w,
+                    ),
+                    decoration: BoxDecoration(
+                      color: referral.getCommissionStatusColor().withValues(
+                        alpha: .1,
+                      ),
+                      borderRadius: BorderRadius.circular(1000.r),
+                    ),
+                    child: RichText(
+                      text: TextSpan(
+                        text: referral.commissionStatus.statusString.capitalize,
+                        style: TextStyles.cardRegular10(context).copyWith(
+                          color: referral.getCommissionStatusColor().withValues(
+                            alpha: .5,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 RichText(
                   text: TextSpan(
                     text:

@@ -120,7 +120,7 @@ extension AppReferralStatusExtension on AppReferralStatus {
   }
 }
 
-enum CommissionStatus { pending, cancelled, paid }
+enum CommissionStatus { pending, cancelled, paid, reverse }
 
 extension CommissionStatusExtension on CommissionStatus {
   String get statusString {
@@ -131,6 +131,8 @@ extension CommissionStatusExtension on CommissionStatus {
         return 'cancelled';
       case CommissionStatus.paid:
         return 'paid';
+      case CommissionStatus.reverse:
+        return 'reverse';
     }
   }
 
@@ -142,6 +144,8 @@ extension CommissionStatusExtension on CommissionStatus {
         return CommissionStatus.cancelled;
       case 'paid':
         return CommissionStatus.paid;
+      case 'reverse':
+        return CommissionStatus.reverse;
       default:
         return CommissionStatus.pending;
     }

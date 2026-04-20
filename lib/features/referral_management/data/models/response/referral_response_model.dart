@@ -107,6 +107,31 @@ class ReferralModel {
     );
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'referer': referer,
+      'fullname': fullName,
+      'email': email,
+      'number': phone,
+      'comm': expectedCommission,
+      'course': course,
+      'country': country,
+      'note': adminNote,
+      'app_com': adminAppNote,
+      'enroll_com': adminEnrollNote,
+      'reg_comm': additionalNotes,
+      'reg_date': additionalNoteSubmittedAt,
+      'referer_name': referredBy,
+      'referer_email': referrerEmail,
+      'enroll_stat': enrollStatus.statusString,
+      'app_stat': appStatus.statusString,
+      'comm_stat': commissionStatus.statusString,
+      'mod_date': updatedAt,
+      'enroll_mod_date': enrollModDate,
+    };
+  }
+
   static Color getEnrollStatusColor(EnrollReferralStatus status) {
     return switch (status) {
       EnrollReferralStatus.referred => AppColors.dynamic,
@@ -135,6 +160,7 @@ class ReferralModel {
       CommissionStatus.pending => AppColors.orange,
       CommissionStatus.paid => AppColors.primary,
       CommissionStatus.cancelled => AppColors.dynamic,
+      CommissionStatus.reverse => AppColors.blue,
     };
   }
 

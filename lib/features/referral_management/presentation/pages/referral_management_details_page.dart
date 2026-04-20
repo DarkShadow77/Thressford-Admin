@@ -1,16 +1,24 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:thressford_admin/app/view/widgets/buttons/icon_text_button.dart';
 import 'package:thressford_admin/core/utils/helpers.dart';
 import 'package:thressford_admin/features/referral_management/data/models/referral_status_enum.dart';
+import 'package:thressford_admin/features/settings/data/models/admin_enum.dart';
 import 'package:thressford_admin/features/settings/presentation/widgets/warning_dialog.dart';
 
 import '../../../../../app/styles/text_styles.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../app/view/widgets/loading/outer_loading.dart';
 import '../../../../core/constants/app_assets.dart';
+import '../../../../core/utils/local_storage.dart';
 import '../../../../core/utils/ui_tool_mix.dart';
+import '../../../dashboard/presentation/bloc/dashboard_bloc.dart';
+import '../../data/models/request/update_commission_status_request_model.dart';
 import '../../data/models/response/referral_response_model.dart';
 import '../bloc/referral_bloc.dart';
 import '../widgets/expected_commission_dialog.dart';
@@ -29,16 +37,97 @@ class _ReferralManagementDetailsPageState
     extends State<ReferralManagementDetailsPage>
     with UIToolMixin {
   ReferralModel referral = ReferralModel.empty();
+  AdminRole currentRole = AdminRole.admin;
 
   @override
   void initState() {
     super.initState();
     referral = widget.param.referral;
+    log("Referral Details ${referral.toJson()}");
+
+    final profileBloc = context.read<DashboardBloc>();
+    final userProfile = profileBloc.state.profile;
+    currentRole = userProfile.role;
+  }
+
+  _releaseCommission() async {
+    if (double.tryParse(referral.expectedCommission) == null ||
+        double.parse(referral.expectedCommission) <= 0) {
+      warningDialog(
+        text:
+            "Expected commission must be set before releasing commission. Please update the expected commission first.",
+      );
+    }
+    context.read<ReferralBloc>().add(
+      UpdateCommissionStatusEvent(
+        request: UpdateCommissionStatusRequestModel(
+          token: await LocalStorageHelper().getAccessToken() ?? "",
+          email: referral.email,
+          status: CommissionStatus.paid,
+        ),
+      ),
+    );
+  }
+
+  _reverseCommission() async {
+    if (double.tryParse(referral.expectedCommission) == null ||
+        double.parse(referral.expectedCommission) <= 0) {
+      warningDialog(
+        text:
+            "Expected commission must be set before releasing commission. Please update the expected commission first.",
+      );
+    }
+    if (referral.commissionStatus != CommissionStatus.paid) {
+      warningDialog(text: "Commission cannot be reversed");
+    }
+    context.read<ReferralBloc>().add(
+      UpdateCommissionStatusEvent(
+        request: UpdateCommissionStatusRequestModel(
+          token: await LocalStorageHelper().getAccessToken() ?? "",
+          email: referral.email,
+          status: CommissionStatus.reverse,
+        ),
+      ),
+    );
+  }
+
+  void _loadingReferralState(BuildContext context, ReferralLoadingState state) {
+    if (state.type == ReferralType.updateCommissionStatus) {
+      outerLoadingDialog(text: "Updating Commission Status");
+    }
+  }
+
+  void _successReferralState(BuildContext context, ReferralSuccessState state) {
+    if (state.type == ReferralType.updateCommissionStatus) {
+      context.read<ReferralBloc>().add(GetAllReferralEvent());
+      Future.delayed((Duration(seconds: 1)), () {
+        if (Get.isDialogOpen == true) Navigator.pop(context);
+        showMessage(context, state.message);
+      });
+    }
+  }
+
+  void _failedReferralState(BuildContext context, ReferralFailureState state) {
+    if (state.type == ReferralType.updateCommissionStatus) {
+      Future.delayed((Duration(seconds: 1)), () {
+        if (Get.isDialogOpen == true) Navigator.pop(context);
+        showMessage(context, state.message, status: true);
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ReferralBloc, ReferralState>(
+    return BlocConsumer<ReferralBloc, ReferralState>(
+      listener: (context, state) {
+        if (state is ReferralLoadingState) {
+          _loadingReferralState(context, state);
+        } else if (state is ReferralSuccessState) {
+          _successReferralState(context, state);
+        } else if (state is ReferralFailureState) {
+          _failedReferralState(context, state);
+        }
+      },
       builder: (context, state) {
         referral = state.referral.firstWhere(
           (element) => element.id == referral.id,
@@ -48,6 +137,10 @@ class _ReferralManagementDetailsPageState
         final isAppRejected = referral.appStatus == AppReferralStatus.denied;
         final isCancelled =
             referral.enrollStatus == EnrollReferralStatus.cancelled;
+
+        final bool canShowCommissionStatus =
+            double.tryParse(referral.expectedCommission) == null ||
+            double.parse(referral.expectedCommission) <= 0;
         return Scaffold(
           appBar: AppBar(
             titleSpacing: 20.w,
@@ -183,7 +276,6 @@ class _ReferralManagementDetailsPageState
                                 ),
                               ],
                             ),
-
                             _buildLabel(
                               context,
                               label: "Full Name",
@@ -249,6 +341,7 @@ class _ReferralManagementDetailsPageState
                               value: referral.course,
                             ),
                             Row(
+                              spacing: 10.w,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Expanded(
@@ -259,6 +352,36 @@ class _ReferralManagementDetailsPageState
                                         "£${formatAmount(double.parse(referral.expectedCommission))}",
                                   ),
                                 ),
+                                if (!canShowCommissionStatus)
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: 4.h,
+                                      horizontal: 8.w,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: referral
+                                          .getCommissionStatusColor()
+                                          .withValues(alpha: .1),
+                                      borderRadius: BorderRadius.circular(
+                                        1000.r,
+                                      ),
+                                    ),
+                                    child: RichText(
+                                      text: TextSpan(
+                                        text: referral
+                                            .commissionStatus
+                                            .statusString
+                                            .capitalize,
+                                        style:
+                                            TextStyles.smallRegular12(
+                                              context,
+                                            ).copyWith(
+                                              color: referral
+                                                  .getCommissionStatusColor(),
+                                            ),
+                                      ),
+                                    ),
+                                  ),
                                 GestureDetector(
                                   onTap: () {
                                     if (isPending) {
@@ -304,6 +427,24 @@ class _ReferralManagementDetailsPageState
                                 ),
                               ],
                             ),
+                            if (currentRole.level >= 3 &&
+                                !canShowCommissionStatus) ...[
+                              if (referral.commissionStatus !=
+                                      CommissionStatus.paid &&
+                                  referral.commissionStatus !=
+                                      CommissionStatus.reverse)
+                                IconTextButton(
+                                  onPressed: _releaseCommission,
+                                  text: "Release Commission",
+                                )
+                              else if (referral.commissionStatus ==
+                                  CommissionStatus.paid)
+                                IconTextButton(
+                                  onPressed: _reverseCommission,
+                                  text: "Reverse Commission",
+                                  color: AppColors.blue,
+                                ),
+                            ],
                           ],
                         ),
                       ),

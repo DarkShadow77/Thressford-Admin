@@ -5,7 +5,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:thressford_admin/core/utils/local_storage.dart';
 import 'package:thressford_admin/features/referral_management/data/models/referral_status_enum.dart';
-import 'package:thressford_admin/features/referral_management/data/models/request/update_commission_status_request_model.dart';
 import 'package:thressford_admin/features/referral_management/data/models/request/update_enroll_status_request_model.dart';
 import 'package:thressford_admin/features/settings/presentation/widgets/warning_dialog.dart';
 
@@ -14,6 +13,9 @@ import '../../../../core/constants/app_assets.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/navigators/route_name.dart';
 import '../../../../core/utils/helpers.dart';
+import '../../../dashboard/presentation/bloc/dashboard_bloc.dart';
+import '../../../settings/data/models/admin_enum.dart';
+import '../../data/models/request/update_commission_status_request_model.dart';
 import '../../data/models/response/referral_response_model.dart';
 import '../bloc/referral_bloc.dart';
 import '../pages/referral_management_details_page.dart';
@@ -25,7 +27,7 @@ class ReferralTile extends StatelessWidget {
 
   final ReferralModel referral;
 
-  void _onSelect(BuildContext context, String value) {
+  Future<void> _onSelect(BuildContext context, String value) async {
     if (value == "view") {
       Navigator.pushNamed(
         context,
@@ -51,26 +53,6 @@ class ReferralTile extends StatelessWidget {
       updateEnrollStatusModal(
         referral: referral,
         onPressed: (value, comment) async {
-          if (value == EnrollReferralStatus.paid) {
-            if (double.tryParse(referral.expectedCommission) == null ||
-                double.parse(referral.expectedCommission) <= 0) {
-              warningDialog(
-                text:
-                    "Expected commission must be set before marking this referral as paid. Please update the expected commission first.",
-              );
-              return false;
-            }
-            context.read<ReferralBloc>().add(
-              UpdateCommissionStatusEvent(
-                request: UpdateCommissionStatusRequestModel(
-                  token: await LocalStorageHelper().getAccessToken() ?? "",
-                  email: referral.email,
-                  status: CommissionStatus.paid,
-                ),
-              ),
-            );
-          }
-
           context.read<ReferralBloc>().add(
             UpdateEnrollStatusEvent(
               request: UpdateEnrollStatusRequestModel(
@@ -87,6 +69,23 @@ class ReferralTile extends StatelessWidget {
 
           return true;
         },
+      );
+    } else if (value == "release commission") {
+      if (double.tryParse(referral.expectedCommission) == null ||
+          double.parse(referral.expectedCommission) <= 0) {
+        warningDialog(
+          text:
+              "Expected commission must be set before releasing commission. Please update the expected commission first.",
+        );
+      }
+      context.read<ReferralBloc>().add(
+        UpdateCommissionStatusEvent(
+          request: UpdateCommissionStatusRequestModel(
+            token: await LocalStorageHelper().getAccessToken() ?? "",
+            email: referral.email,
+            status: CommissionStatus.paid,
+          ),
+        ),
       );
     } else if (value == "add note") {
       addNotesDialog(
@@ -114,6 +113,11 @@ class ReferralTile extends StatelessWidget {
     final isAppRejected = referral.appStatus == AppReferralStatus.denied;
     final bool isCancelled =
         referral.enrollStatus == EnrollReferralStatus.cancelled;
+
+    final profileBloc = context.read<DashboardBloc>();
+    final userProfile = profileBloc.state.profile;
+    AdminRole currentRole = userProfile.role;
+
     return GestureDetector(
       onTap: () => Navigator.pushNamed(
         context,
@@ -213,6 +217,12 @@ class ReferralTile extends StatelessWidget {
                       value: "update",
                       text: "Update Status",
                     ),
+                    if (currentRole.level >= 3)
+                      _buildPopupMenuItem(
+                        context,
+                        value: "release commission",
+                        text: "Release Commission",
+                      ),
                     _buildPopupMenuItem(
                       context,
                       value: "add note",

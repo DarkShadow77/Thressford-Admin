@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:thressford_admin/core/constants/app_assets.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:thressford_admin/core/utils/helpers.dart';
 import 'package:thressford_admin/features/referral_management/data/models/referral_status_enum.dart';
 import 'package:thressford_admin/features/referral_management/data/models/response/referral_response_model.dart';
@@ -122,14 +121,10 @@ class _SubmissionPageState extends State<SubmissionPage>
                               color: AppColors.dynamic05,
                             ),
                             child: Center(
-                              child: SvgPicture.asset(
-                                AssetsSvgIcons.checkCircle,
-                                width: 20.sp,
-                                height: 20.sp,
-                                colorFilter: ColorFilter.mode(
-                                  AppColors.dynamic60,
-                                  BlendMode.srcIn,
-                                ),
+                              child: HugeIcon(
+                                icon: HugeIcons.strokeRoundedUserList,
+                                size: 20.sp,
+                                color: AppColors.dynamic60,
                               ),
                             ),
                           ),

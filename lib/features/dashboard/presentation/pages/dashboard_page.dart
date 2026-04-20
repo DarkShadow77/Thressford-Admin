@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:thressford_admin/app/view/widgets/buttons/theme_toggle.dart';
 import 'package:thressford_admin/core/constants/navigators/route_name.dart';
 import 'package:thressford_admin/features/settings/presentation/bloc/admin_bloc.dart';
@@ -128,6 +129,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             child: QuickAction(
                               icon: e["icon"] as String,
                               text: e["title"] as String,
+                              isIcon: e["isIcon"] as bool,
                               route: route,
                               hasAccess: hasAccess,
                             ),
@@ -146,41 +148,48 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  List<Map<String, String>> quickActions = [
+  List<Map<String, dynamic>> quickActions = [
     {
       "title": "User Management",
       "icon": AssetsSvgIcons.userGroup,
       "route": RouteName.userManagementPage,
+      "isIcon": false,
     },
     {
       "title": "Referrals",
       "icon": AssetsSvgIcons.stickyNote,
       "route": RouteName.referralManagementPage,
+      "isIcon": false,
     },
     {
-      "title": "Submissions",
+      "title": "Referral Approval",
       "icon": AssetsSvgIcons.pound,
       "route": RouteName.submissionPage,
+      "isIcon": true,
     },
     {
       "title": "Payments",
       "icon": AssetsSvgIcons.checkCircle,
       "route": RouteName.paymentPage,
+      "isIcon": false,
     },
     {
       "title": "Reports",
       "icon": AssetsSvgIcons.rise,
       "route": RouteName.reportPage,
+      "isIcon": false,
     },
     {
       "title": "Settings",
       "icon": AssetsSvgIcons.settings,
       "route": RouteName.settingsPage,
+      "isIcon": false,
     },
     {
       "title": "Withdrawal Request",
       "icon": AssetsSvgIcons.pound,
       "route": RouteName.withdrawalRequestPage,
+      "isIcon": false,
     },
   ];
 }
@@ -191,12 +200,14 @@ class QuickAction extends StatelessWidget {
     required this.text,
     required this.icon,
     required this.route,
+    this.isIcon = false,
     this.hasAccess = true,
   });
 
   final String text;
   final String icon;
   final String route;
+  final bool isIcon;
   final bool hasAccess;
 
   @override
@@ -243,15 +254,21 @@ class QuickAction extends StatelessWidget {
                   color: AppColors.dynamic05,
                 ),
                 child: Center(
-                  child: SvgPicture.asset(
-                    icon,
-                    width: 20.w,
-                    height: 20.h,
-                    colorFilter: ColorFilter.mode(
-                      AppColors.dynamic60,
-                      BlendMode.srcIn,
-                    ),
-                  ),
+                  child: isIcon
+                      ? HugeIcon(
+                          icon: HugeIcons.strokeRoundedUserList,
+                          size: 20.sp,
+                          color: AppColors.dynamic60,
+                        )
+                      : SvgPicture.asset(
+                          icon,
+                          width: 20.w,
+                          height: 20.h,
+                          colorFilter: ColorFilter.mode(
+                            AppColors.dynamic60,
+                            BlendMode.srcIn,
+                          ),
+                        ),
                 ),
               ),
               RichText(

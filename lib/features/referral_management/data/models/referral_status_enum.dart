@@ -4,10 +4,10 @@ enum EnrollReferralStatus {
   applicationStarted,
   documentSubmitted,
   offerIssued,
+  paid,
   visaProcessing,
   visaApproved,
   enrolled,
-  paid,
   cancelled,
 }
 
@@ -24,14 +24,14 @@ extension EnrollReferralStatusExtension on EnrollReferralStatus {
         return 'document submitted';
       case EnrollReferralStatus.offerIssued:
         return 'offer issued';
+      case EnrollReferralStatus.paid:
+        return 'paid';
       case EnrollReferralStatus.visaProcessing:
         return 'visa processing';
       case EnrollReferralStatus.visaApproved:
         return 'visa approved';
       case EnrollReferralStatus.enrolled:
         return 'enrolled';
-      case EnrollReferralStatus.paid:
-        return 'paid';
       case EnrollReferralStatus.cancelled:
         return 'cancelled';
     }
@@ -49,6 +49,8 @@ extension EnrollReferralStatusExtension on EnrollReferralStatus {
         return EnrollReferralStatus.documentSubmitted;
       case 'offer issued':
         return EnrollReferralStatus.offerIssued;
+      case 'paid':
+        return EnrollReferralStatus.paid;
       case 'visa processing':
         return EnrollReferralStatus.visaProcessing;
       case 'visa approved':
@@ -57,8 +59,6 @@ extension EnrollReferralStatusExtension on EnrollReferralStatus {
         return EnrollReferralStatus.enrolled;
       case 'cancelled':
         return EnrollReferralStatus.cancelled;
-      case 'paid':
-        return EnrollReferralStatus.paid;
       default:
         return EnrollReferralStatus.referred;
     }
@@ -78,13 +78,13 @@ extension EnrollReferralStatusExtension on EnrollReferralStatus {
         return 4;
       case EnrollReferralStatus.offerIssued:
         return 5; // conversion threshold
-      case EnrollReferralStatus.visaProcessing:
-        return 6;
-      case EnrollReferralStatus.visaApproved:
-        return 7;
-      case EnrollReferralStatus.enrolled:
-        return 8;
       case EnrollReferralStatus.paid:
+        return 6;
+      case EnrollReferralStatus.visaProcessing:
+        return 7;
+      case EnrollReferralStatus.visaApproved:
+        return 8;
+      case EnrollReferralStatus.enrolled:
         return 9;
     }
   }

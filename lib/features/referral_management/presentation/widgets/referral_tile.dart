@@ -349,11 +349,9 @@ class ReferralTile extends StatelessWidget {
                     child: RichText(
                       text: TextSpan(
                         text: referral.commissionStatus.statusString.capitalize,
-                        style: TextStyles.cardRegular10(context).copyWith(
-                          color: referral.getCommissionStatusColor().withValues(
-                            alpha: .5,
-                          ),
-                        ),
+                        style: TextStyles.cardRegular10(
+                          context,
+                        ).copyWith(color: referral.getCommissionStatusColor()),
                       ),
                     ),
                   ),

@@ -25,7 +25,7 @@ extension EnrollReferralStatusExtension on EnrollReferralStatus {
       case EnrollReferralStatus.offerIssued:
         return 'offer issued';
       case EnrollReferralStatus.paid:
-        return 'paid';
+        return 'tuition paid';
       case EnrollReferralStatus.visaProcessing:
         return 'visa processing';
       case EnrollReferralStatus.visaApproved:
@@ -49,6 +49,8 @@ extension EnrollReferralStatusExtension on EnrollReferralStatus {
         return EnrollReferralStatus.documentSubmitted;
       case 'offer issued':
         return EnrollReferralStatus.offerIssued;
+      case 'tuition paid':
+        return EnrollReferralStatus.paid;
       case 'paid':
         return EnrollReferralStatus.paid;
       case 'visa processing':
@@ -120,7 +122,7 @@ extension AppReferralStatusExtension on AppReferralStatus {
   }
 }
 
-enum CommissionStatus { pending, cancelled, paid, reverse }
+enum CommissionStatus { pending, cancelled, paid, reversed }
 
 extension CommissionStatusExtension on CommissionStatus {
   String get statusString {
@@ -131,8 +133,8 @@ extension CommissionStatusExtension on CommissionStatus {
         return 'cancelled';
       case CommissionStatus.paid:
         return 'paid';
-      case CommissionStatus.reverse:
-        return 'reverse';
+      case CommissionStatus.reversed:
+        return 'reversed';
     }
   }
 
@@ -144,8 +146,8 @@ extension CommissionStatusExtension on CommissionStatus {
         return CommissionStatus.cancelled;
       case 'paid':
         return CommissionStatus.paid;
-      case 'reverse':
-        return CommissionStatus.reverse;
+      case 'reversed':
+        return CommissionStatus.reversed;
       default:
         return CommissionStatus.pending;
     }

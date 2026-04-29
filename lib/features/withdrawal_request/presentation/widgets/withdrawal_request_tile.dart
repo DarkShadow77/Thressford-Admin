@@ -144,7 +144,7 @@ class WithdrawalRequestTile extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       text: TextSpan(
-                        text: "-£${formatAmount(20)}",
+                        text: "-£${formatAmount(15)}",
                         style: TextStyles.normalRegular14(
                           context,
                         ).copyWith(color: AppColors.error),
@@ -173,7 +173,7 @@ class WithdrawalRequestTile extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       text: TextSpan(
-                        text: "£${formatAmount(transaction.absAmount - 20)}",
+                        text: "£${formatAmount(transaction.absAmount - 15)}",
                         style: TextStyles.bodySemiBold16(
                           context,
                         ).copyWith(color: AppColors.green),

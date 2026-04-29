@@ -12,10 +12,10 @@ class ReferralModel {
   final String expectedCommission;
   final String course;
   final String country;
-  final String adminNote;
   final String adminAppNote;
   final String adminEnrollNote;
   final String additionalNotes;
+  final String commissionNote;
   final String? additionalNoteSubmittedAt;
   final String referredBy;
   final String referrerEmail;
@@ -35,10 +35,10 @@ class ReferralModel {
     required this.expectedCommission,
     required this.course,
     required this.country,
-    required this.adminNote,
     required this.adminAppNote,
     required this.adminEnrollNote,
     required this.additionalNotes,
+    required this.commissionNote,
     this.additionalNoteSubmittedAt,
     required this.referredBy,
     required this.referrerEmail,
@@ -60,10 +60,10 @@ class ReferralModel {
       expectedCommission: json['comm'] ?? "0",
       course: json['course'] ?? '',
       country: json['country'] ?? '',
-      adminNote: json['note'] ?? "",
       adminAppNote: json['app_com'] ?? "",
       adminEnrollNote: json['enroll_com'] ?? "",
       additionalNotes: json['reg_comm'] ?? '',
+      commissionNote: json['note'] ?? '',
       additionalNoteSubmittedAt:
           json['reg_date'] ?? DateTime.now().toIso8601String(),
       referredBy: json['referer_name'] ?? '',
@@ -91,10 +91,10 @@ class ReferralModel {
       expectedCommission: "0.0",
       course: '',
       country: '',
-      adminNote: "",
       adminAppNote: "",
       adminEnrollNote: "",
       additionalNotes: '',
+      commissionNote: '',
       additionalNoteSubmittedAt: DateTime.now().toIso8601String(),
       referredBy: '',
       referrerEmail: '',
@@ -117,10 +117,10 @@ class ReferralModel {
       'comm': expectedCommission,
       'course': course,
       'country': country,
-      'note': adminNote,
       'app_com': adminAppNote,
       'enroll_com': adminEnrollNote,
       'reg_comm': additionalNotes,
+      'note': commissionNote,
       'reg_date': additionalNoteSubmittedAt,
       'referer_name': referredBy,
       'referer_email': referrerEmail,
@@ -160,7 +160,7 @@ class ReferralModel {
       CommissionStatus.pending => AppColors.orange,
       CommissionStatus.paid => AppColors.primary,
       CommissionStatus.cancelled => AppColors.dynamic,
-      CommissionStatus.reverse => AppColors.blue,
+      CommissionStatus.reversed => AppColors.blue,
     };
   }
 

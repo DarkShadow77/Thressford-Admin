@@ -21,6 +21,7 @@ import '../../../dashboard/presentation/bloc/dashboard_bloc.dart';
 import '../../data/models/request/update_commission_status_request_model.dart';
 import '../../data/models/response/referral_response_model.dart';
 import '../bloc/referral_bloc.dart';
+import '../widgets/commission_reversal_reason_dialog.dart';
 import '../widgets/expected_commission_dialog.dart';
 
 class ReferralManagementDetailsPage extends StatefulWidget {
@@ -64,6 +65,7 @@ class _ReferralManagementDetailsPageState
           token: await LocalStorageHelper().getAccessToken() ?? "",
           email: referral.email,
           status: CommissionStatus.paid,
+          note: "",
         ),
       ),
     );
@@ -80,14 +82,19 @@ class _ReferralManagementDetailsPageState
     if (referral.commissionStatus != CommissionStatus.paid) {
       warningDialog(text: "Commission cannot be reversed");
     }
-    context.read<ReferralBloc>().add(
-      UpdateCommissionStatusEvent(
-        request: UpdateCommissionStatusRequestModel(
-          token: await LocalStorageHelper().getAccessToken() ?? "",
-          email: referral.email,
-          status: CommissionStatus.reverse,
-        ),
-      ),
+    commissionReversalReasonDialog(
+      onTap: (value) async {
+        context.read<ReferralBloc>().add(
+          UpdateCommissionStatusEvent(
+            request: UpdateCommissionStatusRequestModel(
+              token: await LocalStorageHelper().getAccessToken() ?? "",
+              email: referral.email,
+              status: CommissionStatus.reversed,
+              note: value,
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -430,9 +437,7 @@ class _ReferralManagementDetailsPageState
                             if (currentRole.level >= 3 &&
                                 !canShowCommissionStatus) ...[
                               if (referral.commissionStatus !=
-                                      CommissionStatus.paid &&
-                                  referral.commissionStatus !=
-                                      CommissionStatus.reverse)
+                                  CommissionStatus.paid)
                                 IconTextButton(
                                   onPressed: _releaseCommission,
                                   text: "Release Commission",
@@ -448,6 +453,65 @@ class _ReferralManagementDetailsPageState
                           ],
                         ),
                       ),
+                      if (referral.commissionNote.isNotEmpty) ...[
+                        SizedBox(height: 24.h),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            vertical: 16.h,
+                            horizontal: 16.w,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.blue5,
+                            borderRadius: BorderRadius.circular(14.r),
+                          ),
+                          child: Column(
+                            spacing: 12.h,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Row(
+                                spacing: 8.w,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SvgPicture.asset(
+                                    AssetsSvgIcons.note,
+                                    width: 20.w,
+                                    height: 20.h,
+                                    fit: BoxFit.contain,
+                                    colorFilter: ColorFilter.mode(
+                                      AppColors.blue,
+                                      BlendMode.srcIn,
+                                    ),
+                                  ),
+                                  RichText(
+                                    text: TextSpan(
+                                      text: "Reason for Reversal",
+                                      style: TextStyles.normalRegular14(
+                                        context,
+                                      ).copyWith(color: AppColors.blue),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: 16.h,
+                                  horizontal: 16.w,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppColors.blue10,
+                                  borderRadius: BorderRadius.circular(8.r),
+                                ),
+                                child: RichText(
+                                  text: TextSpan(
+                                    text: referral.commissionNote,
+                                    style: TextStyles.normalRegular14(context),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                       SizedBox(height: 24.h),
                       Container(
                         padding: EdgeInsets.symmetric(

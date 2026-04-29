@@ -15,11 +15,13 @@ class UpdateCommissionStatusRequestModel {
     required this.token,
     required this.email,
     required this.status,
+    required this.note,
   });
 
   String token;
   String email;
   CommissionStatus status;
+  String note;
 
   factory UpdateCommissionStatusRequestModel.fromJson(
     Map<String, dynamic> json,
@@ -28,6 +30,7 @@ class UpdateCommissionStatusRequestModel {
     token: json["token"] ?? "",
     email: json["email"] ?? "",
     status: CommissionStatusExtension.fromString(json['status'] ?? ""),
+    note: json["note"] ?? "",
   );
 
   Map<String, dynamic> toMap() {
@@ -35,6 +38,7 @@ class UpdateCommissionStatusRequestModel {
     data["token"] = token;
     data["email"] = email;
     data["status"] = status.statusString;
+    data["note"] = note;
     return data;
   }
 
@@ -43,7 +47,7 @@ class UpdateCommissionStatusRequestModel {
     data["token"] = token;
     data["email"] = email;
     data["status"] = status.statusString;
-
+    data["note"] = note;
     return data;
   }
 }

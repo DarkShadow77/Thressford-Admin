@@ -136,11 +136,12 @@ class ReferralModel {
     return switch (status) {
       EnrollReferralStatus.referred => AppColors.dynamic,
       EnrollReferralStatus.contacted => AppColors.green,
-      EnrollReferralStatus.applicationStarted => AppColors.orange,
       EnrollReferralStatus.documentSubmitted => AppColors.dynamic,
+      EnrollReferralStatus.applicationStarted => AppColors.orange,
       EnrollReferralStatus.offerIssued => AppColors.green,
       EnrollReferralStatus.visaProcessing => AppColors.orange,
       EnrollReferralStatus.visaApproved => AppColors.green,
+      EnrollReferralStatus.visaRejected => AppColors.error,
       EnrollReferralStatus.enrolled => AppColors.dynamic,
       EnrollReferralStatus.cancelled => AppColors.dynamic,
       EnrollReferralStatus.paid => AppColors.primary,

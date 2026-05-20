@@ -7,6 +7,7 @@ enum EnrollReferralStatus {
   paid,
   visaProcessing,
   visaApproved,
+  visaRejected,
   enrolled,
   cancelled,
 }
@@ -18,10 +19,10 @@ extension EnrollReferralStatusExtension on EnrollReferralStatus {
         return 'referred';
       case EnrollReferralStatus.contacted:
         return 'contacted';
-      case EnrollReferralStatus.applicationStarted:
-        return 'application started';
       case EnrollReferralStatus.documentSubmitted:
         return 'document submitted';
+      case EnrollReferralStatus.applicationStarted:
+        return 'application started';
       case EnrollReferralStatus.offerIssued:
         return 'offer issued';
       case EnrollReferralStatus.paid:
@@ -30,6 +31,8 @@ extension EnrollReferralStatusExtension on EnrollReferralStatus {
         return 'visa processing';
       case EnrollReferralStatus.visaApproved:
         return 'visa approved';
+      case EnrollReferralStatus.visaRejected:
+        return 'visa rejected';
       case EnrollReferralStatus.enrolled:
         return 'enrolled';
       case EnrollReferralStatus.cancelled:
@@ -43,10 +46,10 @@ extension EnrollReferralStatusExtension on EnrollReferralStatus {
         return EnrollReferralStatus.referred;
       case 'contacted':
         return EnrollReferralStatus.contacted;
-      case 'application started':
-        return EnrollReferralStatus.applicationStarted;
       case 'document submitted':
         return EnrollReferralStatus.documentSubmitted;
+      case 'application started':
+        return EnrollReferralStatus.applicationStarted;
       case 'offer issued':
         return EnrollReferralStatus.offerIssued;
       case 'tuition paid':
@@ -57,6 +60,8 @@ extension EnrollReferralStatusExtension on EnrollReferralStatus {
         return EnrollReferralStatus.visaProcessing;
       case 'visa approved':
         return EnrollReferralStatus.visaApproved;
+      case 'visa rejected':
+        return EnrollReferralStatus.visaRejected;
       case 'enrolled':
         return EnrollReferralStatus.enrolled;
       case 'cancelled':
@@ -74,9 +79,9 @@ extension EnrollReferralStatusExtension on EnrollReferralStatus {
         return 1;
       case EnrollReferralStatus.contacted:
         return 2;
-      case EnrollReferralStatus.applicationStarted:
-        return 3;
       case EnrollReferralStatus.documentSubmitted:
+        return 3;
+      case EnrollReferralStatus.applicationStarted:
         return 4;
       case EnrollReferralStatus.offerIssued:
         return 5; // conversion threshold
@@ -86,8 +91,10 @@ extension EnrollReferralStatusExtension on EnrollReferralStatus {
         return 7;
       case EnrollReferralStatus.visaApproved:
         return 8;
-      case EnrollReferralStatus.enrolled:
+      case EnrollReferralStatus.visaRejected:
         return 9;
+      case EnrollReferralStatus.enrolled:
+        return 10;
     }
   }
 

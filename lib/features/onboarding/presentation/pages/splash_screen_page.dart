@@ -1,7 +1,6 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:thressford_admin/features/auth/presentation/pages/login_page.dart';
 
 import '../../../../app/view/widgets/thessford_icon.dart';
@@ -45,7 +44,6 @@ class _SplashScreenPageState extends State<SplashScreenPage>
           duration: 10000,
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           animationDuration: Duration(milliseconds: 600),
-          pageTransitionType: PageTransitionType.bottomToTop,
           splashTransition: SplashTransition.fadeTransition,
           nextScreen: const LoginPage(),
         ),

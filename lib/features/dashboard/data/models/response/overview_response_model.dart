@@ -1,3 +1,5 @@
+import '../../../../../core/utils/helpers.dart';
+
 class OverviewModel {
   final int totalUsers;
   final int totalReferrals;
@@ -15,11 +17,11 @@ class OverviewModel {
 
   factory OverviewModel.fromJson(Map<String, dynamic> json) {
     return OverviewModel(
-      totalUsers: json['total_users'] ?? 0,
-      totalReferrals: json['total_referrals'] ?? 0,
-      pendingCommissions: json['pending_commissions'] ?? 0,
-      paidCommissions: json['paid_commissions'] ?? 0,
-      totalPaidSum: double.parse((json['total_paid_sum'] ?? 0.0).toString()),
+      totalUsers: parseInt(json['total_users']),
+      totalReferrals: parseInt(json['total_referrals']),
+      pendingCommissions: parseInt(json['pending_commissions']),
+      paidCommissions: parseInt(json['paid_commissions']),
+      totalPaidSum: parseDouble(json['total_paid_sum']),
     );
   }
 

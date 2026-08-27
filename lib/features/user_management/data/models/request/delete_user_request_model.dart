@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import '../../../../../core/utils/helpers.dart';
+
 DeleteUserRequestModel deleteUserRequestModelFromJson(String str) =>
     DeleteUserRequestModel.fromJson(json.decode(str));
 
@@ -21,11 +23,10 @@ class DeleteUserRequestModel {
 
   factory DeleteUserRequestModel.fromJson(Map<String, dynamic> json) =>
       DeleteUserRequestModel(
-        // Handle potential null values
-        token: json["token"] ?? "",
-        email: json["email"] ?? "",
-        isDelete: json["is_delete"] ?? "",
-        delDate: json["del_date"] ?? "",
+        token: parseString(json["token"]),
+        email: parseString(json["email"]),
+        isDelete: parseInt(json["is_delete"]),
+        delDate: parseString(json["del_date"]),
       );
 
   Map<String, dynamic> toMap() {

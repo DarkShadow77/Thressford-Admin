@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import '../../../../../core/utils/helpers.dart';
+
 ChangePasswordRequestModel loginRequestModelFromJson(String str) =>
     ChangePasswordRequestModel.fromJson(json.decode(str));
 
@@ -21,11 +23,10 @@ class ChangePasswordRequestModel {
 
   factory ChangePasswordRequestModel.fromJson(Map<String, dynamic> json) =>
       ChangePasswordRequestModel(
-        // Handle potential null values
-        token: json["token"] ?? "",
-        oldPass: json["old_pass"] ?? "",
-        newPass: json["new_pass"] ?? "",
-        confirmNewPass: json["confirm_new_pass"] ?? "",
+        token: parseString(json["token"]),
+        oldPass: parseString(json["old_pass"]),
+        newPass: parseString(json["new_pass"]),
+        confirmNewPass: parseString(json["confirm_new_pass"]),
       );
 
   Map<String, dynamic> toMap() {

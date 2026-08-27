@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:thressford_admin/features/settings/data/models/admin_enum.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/utils/helpers.dart';
 
 class AdminModel {
   final String id;
@@ -27,14 +28,17 @@ class AdminModel {
 
   factory AdminModel.fromJson(Map<String, dynamic> json) {
     return AdminModel(
-      id: json['id'] ?? "",
-      fullName: json['fullname'] ?? '',
-      email: json['email'] ?? '',
-      role: AdminRoleExtension.fromString(json['role'] ?? ""),
-      status: AdminStatusExtension.fromString(json['status'] ?? ""),
-      createdAt: json['create_date'] ?? DateTime.now().toIso8601String(),
-      statusDate: json['status_date'],
-      isDeleted: json['is_del'] ?? '',
+      id: parseString(json['id']),
+      fullName: parseString(json['fullname']),
+      email: parseString(json['email']),
+      role: AdminRoleExtension.fromString(parseString(json['role'])),
+      status: AdminStatusExtension.fromString(parseString(json['status'])),
+      createdAt: parseString(
+        json['create_date'],
+        fallback: DateTime.now().toIso8601String(),
+      ),
+      statusDate: parseStringNullable(json['status_date']),
+      isDeleted: parseString(json['is_del']),
     );
   }
 

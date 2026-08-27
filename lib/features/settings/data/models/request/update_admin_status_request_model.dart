@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import '../../../../../core/utils/helpers.dart';
 import '../admin_enum.dart';
 
 UpdateAdminStatusRequestModel updateAdminStatusRequestModelFromJson(
@@ -23,10 +24,9 @@ class UpdateAdminStatusRequestModel {
 
   factory UpdateAdminStatusRequestModel.fromJson(Map<String, dynamic> json) =>
       UpdateAdminStatusRequestModel(
-        // Handle potential null values
-        token: json["token"] ?? "",
-        email: json["email"] ?? "",
-        status: AdminStatusExtension.fromString(json['status'] ?? ""),
+        token: parseString(json["token"]),
+        email: parseString(json["email"]),
+        status: AdminStatusExtension.fromString(parseString(json['status'])),
       );
 
   Map<String, dynamic> toMap() {

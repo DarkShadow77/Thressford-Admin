@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import '../../../../../core/utils/helpers.dart';
 import '../referral_status_enum.dart';
 
 UpdateEnrollStatusRequestModel updateEnrollStatusRequestModelFromJson(
@@ -27,12 +28,13 @@ class UpdateEnrollStatusRequestModel {
 
   factory UpdateEnrollStatusRequestModel.fromJson(Map<String, dynamic> json) =>
       UpdateEnrollStatusRequestModel(
-        // Handle potential null values
-        token: json["token"] ?? "",
-        email: json["email"] ?? "",
-        status: EnrollReferralStatusExtension.fromString(json['status'] ?? ""),
-        comment: json["comment"] ?? "",
-        enrollDate: json["enroll_date"] ?? "",
+        token: parseString(json["token"]),
+        email: parseString(json["email"]),
+        status: EnrollReferralStatusExtension.fromString(
+          parseString(json['status']),
+        ),
+        comment: parseString(json["comment"]),
+        enrollDate: parseString(json["enroll_date"]),
       );
 
   Map<String, dynamic> toMap() {

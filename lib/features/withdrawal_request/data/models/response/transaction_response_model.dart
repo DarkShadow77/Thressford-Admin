@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/utils/helpers.dart';
 import '../transaction_enums.dart';
 
 class TransactionModel {
@@ -28,15 +29,15 @@ class TransactionModel {
 
   factory TransactionModel.fromJson(Map<String, dynamic> json) {
     return TransactionModel(
-      id: json['id'] ?? '',
-      userId: json['user_id'] ?? '',
-      type: PaymentTypeExtension.fromString(json['type'] ?? ''),
-      amount: double.tryParse(json['amount'].toString()) ?? 0.0,
-      status: PaymentStatusExtension.fromString(json['status'] ?? ''),
-      referenceId: json['reference_id'],
-      description: json['description'] ?? '',
-      createdAt: json['created_at'] ?? '',
-      updatedAt: json['updated_at'],
+      id: parseString(json['id']),
+      userId: parseString(json['user_id']),
+      type: PaymentTypeExtension.fromString(parseString(json['type'])),
+      amount: parseDouble(json['amount']),
+      status: PaymentStatusExtension.fromString(parseString(json['status'])),
+      referenceId: parseStringNullable(json['reference_id']),
+      description: parseString(json['description']),
+      createdAt: parseString(json['created_at']),
+      updatedAt: parseStringNullable(json['updated_at']),
     );
   }
 

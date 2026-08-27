@@ -1,3 +1,4 @@
+import '../../../../../core/utils/helpers.dart';
 import '../../../../settings/data/models/admin_enum.dart';
 
 class UserProfile {
@@ -15,10 +16,10 @@ class UserProfile {
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
     return UserProfile(
-      token: json['token'] ?? '',
-      fullName: json['fullname'] ?? '',
-      email: json['email'] ?? '',
-      role: AdminRoleExtension.fromString(json['role'] ?? ""),
+      token: parseString(json['token']),
+      fullName: parseString(json['fullname']),
+      email: parseString(json['email']),
+      role: AdminRoleExtension.fromString(parseString(json['role'])),
     );
   }
 

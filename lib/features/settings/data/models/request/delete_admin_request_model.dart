@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import '../../../../../core/utils/helpers.dart';
+
 DeleteAdminRequestModel deleteAdminRequestModelFromJson(String str) =>
     DeleteAdminRequestModel.fromJson(json.decode(str));
 
@@ -19,10 +21,9 @@ class DeleteAdminRequestModel {
 
   factory DeleteAdminRequestModel.fromJson(Map<String, dynamic> json) =>
       DeleteAdminRequestModel(
-        // Handle potential null values
-        token: json["token"] ?? "",
-        email: json["email"] ?? "",
-        restore: json["restore"] ?? false,
+        token: parseString(json["token"]),
+        email: parseString(json["email"]),
+        restore: parseBool(json["restore"]),
       );
 
   Map<String, dynamic> toMap() {

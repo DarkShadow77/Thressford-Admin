@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/utils/helpers.dart';
 import '../users_management_status_enum.dart';
 
 class UsersModel {
@@ -38,20 +39,25 @@ class UsersModel {
 
   factory UsersModel.fromJson(Map<String, dynamic> json) {
     return UsersModel(
-      id: json['id'] ?? "",
-      fullName: json['fullname'] ?? '',
-      email: json['email'] ?? '',
-      phone: json['number'] ?? '',
-      createdAt: json['reg_date'] ?? DateTime.now().toIso8601String(),
-      updatedAt: json['mod_date'],
-      bankName: json['bank_name'] ?? "",
-      acctNo: json['acc_no'] ?? "",
-      acctName: json['acc_name'] ?? "",
-      profilePic: json['profile_pic'] ?? "",
-      status: UsersStatusExtension.fromString(json['status'] ?? "inactive"),
-      verifyStat: json['verify_stat'] ?? "",
-      totalReferrals: json['total_referrals'] ?? 0,
-      totalEarnings: json['total_earnings'] ?? 0,
+      id: parseString(json['id']),
+      fullName: parseString(json['fullname']),
+      email: parseString(json['email']),
+      phone: parseString(json['number']),
+      createdAt: parseString(
+        json['reg_date'],
+        fallback: DateTime.now().toIso8601String(),
+      ),
+      updatedAt: parseStringNullable(json['mod_date']),
+      bankName: parseString(json['bank_name']),
+      acctNo: parseString(json['acc_no']),
+      acctName: parseString(json['acc_name']),
+      profilePic: parseString(json['profile_pic']),
+      status: UsersStatusExtension.fromString(
+        parseString(json['status'], fallback: "inactive"),
+      ),
+      verifyStat: parseString(json['verify_stat']),
+      totalReferrals: parseInt(json['total_referrals']),
+      totalEarnings: parseInt(json['total_earnings']),
     );
   }
 

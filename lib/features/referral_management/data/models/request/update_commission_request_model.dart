@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import '../../../../../core/utils/helpers.dart';
+
 UpdateCommissionRequestModel updateCommissionRequestModelFromJson(String str) =>
     UpdateCommissionRequestModel.fromJson(json.decode(str));
 
@@ -21,11 +23,10 @@ class UpdateCommissionRequestModel {
 
   factory UpdateCommissionRequestModel.fromJson(Map<String, dynamic> json) =>
       UpdateCommissionRequestModel(
-        // Handle potential null values
-        token: json["token"] ?? "",
-        email: json["email"] ?? "",
-        comm: json["comm"] ?? 0,
-        commDate: json["comm_date"] ?? "",
+        token: parseString(json["token"]),
+        email: parseString(json["email"]),
+        comm: parseInt(json["comm"]),
+        commDate: parseString(json["comm_date"]),
       );
 
   Map<String, dynamic> toMap() {

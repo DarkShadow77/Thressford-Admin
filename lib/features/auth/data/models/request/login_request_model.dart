@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import '../../../../../core/utils/helpers.dart';
+
 LoginRequestModel loginRequestModelFromJson(String str) =>
     LoginRequestModel.fromJson(json.decode(str));
 
@@ -14,9 +16,8 @@ class LoginRequestModel {
 
   factory LoginRequestModel.fromJson(Map<String, dynamic> json) =>
       LoginRequestModel(
-        // Handle potential null values
-        email: json["email"] ?? "",
-        password: json["password"] ?? "",
+        email: parseString(json["email"]),
+        password: parseString(json["password"]),
       );
 
   Map<String, dynamic> toMap() {

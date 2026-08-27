@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import '../../../../../core/utils/helpers.dart';
+
 AddAdminRequestModel addAdminRequestModelFromJson(String str) =>
     AddAdminRequestModel.fromJson(json.decode(str));
 
@@ -23,12 +25,11 @@ class AddAdminRequestModel {
 
   factory AddAdminRequestModel.fromJson(Map<String, dynamic> json) =>
       AddAdminRequestModel(
-        // Handle potential null values
-        token: json["token"] ?? "",
-        email: json["email"] ?? "",
-        password: json["password"] ?? "",
-        fullName: json["fullname"] ?? "",
-        role: json["role"] ?? "",
+        token: parseString(json["token"]),
+        email: parseString(json["email"]),
+        password: parseString(json["password"]),
+        fullName: parseString(json["fullname"]),
+        role: parseString(json["role"]),
       );
 
   Map<String, dynamic> toMap() {

@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/utils/helpers.dart';
 import '../referral_status_enum.dart';
 
 class ReferralModel {
@@ -52,32 +53,39 @@ class ReferralModel {
 
   factory ReferralModel.fromJson(Map<String, dynamic> json) {
     return ReferralModel(
-      id: json['id'] ?? "",
-      referer: json['referer'] ?? "",
-      fullName: json['fullname'] ?? '',
-      email: json['email'] ?? '',
-      phone: json['number'] ?? '',
-      expectedCommission: json['comm'] ?? "0",
-      course: json['course'] ?? '',
-      country: json['country'] ?? '',
-      adminAppNote: json['app_com'] ?? "",
-      adminEnrollNote: json['enroll_com'] ?? "",
-      additionalNotes: json['reg_comm'] ?? '',
-      commissionNote: json['note'] ?? '',
-      additionalNoteSubmittedAt:
-          json['reg_date'] ?? DateTime.now().toIso8601String(),
-      referredBy: json['referer_name'] ?? '',
-      referrerEmail: json['referer_email'] ?? '',
+      id: parseString(json['id']),
+      referer: parseString(json['referer']),
+      fullName: parseString(json['fullname']),
+      email: parseString(json['email']),
+      phone: parseString(json['number']),
+      expectedCommission: parseString(json['comm'], fallback: "0"),
+      course: parseString(json['course']),
+      country: parseString(json['country']),
+      adminAppNote: parseString(json['app_com']),
+      adminEnrollNote: parseString(json['enroll_com']),
+      additionalNotes: parseString(json['reg_comm']),
+      commissionNote: parseString(json['note']),
+      additionalNoteSubmittedAt: parseString(
+        json['reg_date'],
+        fallback: DateTime.now().toIso8601String(),
+      ),
+      referredBy: parseString(json['referer_name']),
+      referrerEmail: parseString(json['referer_email']),
       enrollStatus: EnrollReferralStatusExtension.fromString(
-        json['enroll_stat'] ?? "",
+        parseString(json['enroll_stat']),
       ),
-      appStatus: AppReferralStatusExtension.fromString(json['app_stat'] ?? ""),
+      appStatus: AppReferralStatusExtension.fromString(
+        parseString(json['app_stat']),
+      ),
       commissionStatus: CommissionStatusExtension.fromString(
-        json['comm_stat'] ?? "",
+        parseString(json['comm_stat']),
       ),
-      createdAt: json['reg_date'] ?? DateTime.now().toIso8601String(),
-      updatedAt: json['mod_date'],
-      enrollModDate: json['enroll_mod_date'],
+      createdAt: parseString(
+        json['reg_date'],
+        fallback: DateTime.now().toIso8601String(),
+      ),
+      updatedAt: parseStringNullable(json['mod_date']),
+      enrollModDate: parseStringNullable(json['enroll_mod_date']),
     );
   }
 

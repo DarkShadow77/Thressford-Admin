@@ -1,3 +1,5 @@
+import '../../../../../core/utils/helpers.dart';
+
 class PaymentModel {
   final String id;
   final String fullName;
@@ -25,16 +27,19 @@ class PaymentModel {
 
   factory PaymentModel.fromJson(Map<String, dynamic> json) {
     return PaymentModel(
-      id: json['id'] ?? "",
-      fullName: json['fullName'] ?? '',
-      email: json['email'] ?? '',
-      amount: json['amount'] ?? 0.0,
-      course: json['course'] ?? '',
-      country: json['country'] ?? '',
-      referredBy: json['referred_by'] ?? '',
-      status: json['status'] ?? "",
-      createdAt: json['created_at'] ?? DateTime.now().toIso8601String(),
-      updatedAt: json['updated_at'],
+      id: parseString(json['id']),
+      fullName: parseString(json['fullName']),
+      email: parseString(json['email']),
+      amount: parseDouble(json['amount']),
+      course: parseString(json['course']),
+      country: parseString(json['country']),
+      referredBy: parseString(json['referred_by']),
+      status: parseString(json['status']),
+      createdAt: parseString(
+        json['created_at'],
+        fallback: DateTime.now().toIso8601String(),
+      ),
+      updatedAt: parseStringNullable(json['updated_at']),
     );
   }
 

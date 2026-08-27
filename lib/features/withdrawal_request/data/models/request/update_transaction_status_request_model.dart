@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import '../../../../../core/utils/helpers.dart';
 import '../transaction_enums.dart';
 
 UpdateTransactionStatusRequestModel updateTransactionStatusRequestModelFromJson(
@@ -24,10 +25,9 @@ class UpdateTransactionStatusRequestModel {
   factory UpdateTransactionStatusRequestModel.fromJson(
     Map<String, dynamic> json,
   ) => UpdateTransactionStatusRequestModel(
-    // Handle potential null values
-    token: json["token"] ?? "",
-    transactionId: json["transaction_id"] ?? "",
-    status: PaymentStatusExtension.fromString(json['status'] ?? ""),
+    token: parseString(json["token"]),
+    transactionId: parseString(json["transaction_id"]),
+    status: PaymentStatusExtension.fromString(parseString(json['status'])),
   );
 
   Map<String, dynamic> toMap() {
